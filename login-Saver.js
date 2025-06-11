@@ -1,7 +1,7 @@
 /* 
 6/11/2025
-Creates a .json file that stores your specific OKIES login session into /loginJsons
-allows for multiple accounts to be made
+Creates a .json file that stores your specific OKIES login session into /loginJsons (note that if folder not present yet, it will make it on the first run) 
+allows for multiple accounts to be made. 
 
 INSTRUCTIONS
 - follow instructions in root directory 
