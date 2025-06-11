@@ -53,7 +53,7 @@ const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';
     });
   });
 
-  await page.goto('https://okies-test.occ.ok.gov/');
+  await page.goto(STARTPAGE);
 
   if(IS_EXTERNAL){
     //login externally

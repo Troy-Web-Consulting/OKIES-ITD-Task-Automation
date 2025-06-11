@@ -13,6 +13,7 @@
 ## Future additions 
 - clean up files with functions and such 
 - randomizing, yes/no selections
+- make 47 a const
 
 ## Learned 
   - auth is the more intuitive way to store vs my-user-data
