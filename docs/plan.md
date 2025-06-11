@@ -11,9 +11,12 @@
 - must pull login info, so can setup from a certain account
 
 ## Future additions 
+- clean up files with functions and such 
+- randomizing, yes/no selections
 
 ## Learned 
   - auth is the more intuitive way to store vs my-user-data
+  - USE PLAYWRIGHT INSPECTOR TO FIND ELEMENTS 
 
 ## Storing login 
   - if internal, do it yourself, if external, will automate

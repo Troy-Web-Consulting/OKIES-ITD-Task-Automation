@@ -1,53 +1,91 @@
-import { test, expect } from '@playwright/test';
+/* 
+6/11/2025
+Takes you to the OKIES ITD payment tab as quick as possible by filling in the rest of the form with the bare minimum to get there 
 
+INSTRUCTIONS
+- set the setup variables and your good to go. 
+- DO NOT HAVE STARTAT SET TO LESS THAN 1
+- note STARTPAGE SET FOR A QUERY PAGE
+
+MAITNENCE
+-If button locations change can simply recalibrate pixels, only one neccesary would be the right arrow button 
+- check for pop ups throughout running 
+-Signs in based on what login session info is saved based on my-user-data from last open with playwright 
+-Requires user data that is not in repo
+
+GOOD TO NOTE
+- current issue in iterating to 3rd and 4th pages in continuim (after first page has already happened), but not needed for current scope 
+- Google groups message cooldown is exactly 3 minutes 
+- 10 messages at a time 
+- tab distance to next arrow differs per page
+- Potential issue when when returning to pages >1 after cooldown (extra tab) 
+  - think it is fixed but have not done a ton of testing on it 
+
+*/
+
+const { chromium } = require('playwright');
+
+/*Random Entry Variable Generation*/
+
+// Enum-like object
+const HoleType = {
+  DIRECTIONAL: 'Directional Hole',
+  HORIZONTAL: 'Horizontal Hole',
+  MULTI: 'Multi Unit',
+  VERTICAL: 'Vertical Hole'
+};
+// Assigning a value
+const holeType = HoleType.MULTI;
 
 //Well Types
-enum WellType {
-  COMMERCIAL = 'Commercial Disposal',
-  INJECTION = 'Injection',
-  NONCOMM = 'Non-Commercial Disposal',
-  OIL = 'Oil & Gas',
-  STRATIGRAPHIC = 'Stratigraphic Test',
-  UNDERGROUND = 'Underground Storage',
-  WATER = 'Water Supply',
+const WellType = {
+  COMMERCIAL : 'Commercial Disposal',
+  INJECTION : 'Injection',
+  NONCOMM : 'Non-Commercial Disposal',
+  OIL : 'Oil & Gas',
+  STRATIGRAPHIC : 'Stratigraphic Test',
+  UNDERGROUND : 'Underground Storage',
+  WATER : 'Water Supply',
 }
-var wellType:string = WellType.OIL;
+var wellType = WellType.OIL;
 
 //Permit Types
-enum PermitType {
-  NON = 'Non-Expedited',
-  EXPEDITED = 'Expedited',
-  TEMP = 'Temporary',
+const PermitType = {
+  NON : 'Non-Expedited',
+  EXPEDITED : 'Expedited',
+  TEMP : 'Temporary',
 }
-var permitType:string = PermitType.NON;
+var permitType = PermitType.NON;
 
-//Hole Types
-enum HoleType {
-  DIRECTIONAL = 'Directional Hole',
-  HORIZONTAL = 'Horizontal Hole',
-  MULTI = 'Multi Unit',
-  VERTICAL = 'Vertical Hole',
-}
-var holeType:string = HoleType.MULTI;
+var randID = Math.floor(Math.random() * 1001);
 
-var randID:number = Math.floor(Math.random() * 1001);
 
-test('test', async ({ page }) => {
-  test.setTimeout(120_000)
+/* VARS TO SET*/
+const LOGIN_FILE_NAME = 'auth.json';  
+
+(async () => {
+  const browser = await chromium.launch({
+    channel: 'chrome',
+    headless: false,
+    args: [
+      '--start-maximized',
+      '--disable-blink-features=AutomationControlled',
+      '--no-sandbox',
+      '--disable-infobars'   
+    ],
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+    viewport: null
+  });
+  const context = await browser.newContext({ storageState: 'loginJsons/' + LOGIN_FILE_NAME });
+  const page = await context.newPage();
+
+  //form information
+  await page.goto('https://okies-test.occ.ok.gov/General/Home/Landing');
   
-  //Sign In
-  await page.goto('https://okies-test.occ.ok.gov/');
-  await page.getByRole('button', { name: ' External User Access For' }).click();
-  await page.getByRole('textbox', { name: 'Email Address' }).click();
-  await page.getByRole('textbox', { name: 'Email Address' }).fill(EMAIL);
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
-  await page.getByRole('button', { name: 'Sign in' }).click();
-
-  //Form Information
+  //ensures new page is open 
   const page1Promise = page.waitForEvent('popup');
   await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
-  //ensures page opened
+  //ensures new page/tab is open
   const page1 = await page1Promise;
   await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
   //Set Hole Type as specificied above
@@ -63,9 +101,12 @@ test('test', async ({ page }) => {
   await page1.getByRole('button', { name: 'Save & Continue' }).click();
   await page1.getByRole('button', { name: 'Confirm' }).click();
 
+
   //Operator Info
   await page1.waitForTimeout(1000); //wait for 1 second
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
+
+
 
   //Well Information
   await page1.waitForTimeout(1000); //wait for 1 second
@@ -132,28 +173,22 @@ test('test', async ({ page }) => {
   await page1.waitForTimeout(1000); //wait for 1 second
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
 
+
   //Operator Assertions
-  await expect(page1.locator('#formContent').getByText('Operator Assertions')).toBeVisible();
   await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.locator('#OperatorAssertions_0__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_1__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_2__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_3__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_4__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_5__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_6__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_7__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_8__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_9__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_10__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_11__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_12__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_13__AssertionResponse_Yes').check();
-  await page1.locator('#OperatorAssertions_14__AssertionResponse_Yes').check();
+  for(let i = 0; i < 47; i++){
+    await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
+  }
   await page1.getByRole('button', { name: 'Next' }).click();
 
-  //Form Submit
-  // await page1.waitForTimeout(1000); //wait for 1 second
-  // await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
-  // await page1.getByRole('button', { name: 'Submit', exact: true }).click();
-});
+  // Form Submit
+  await page1.waitForTimeout(1000); //wait for 1 second
+  await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
+  await page1.getByRole('button', { name: 'Submit', exact: true }).click();
+  await page1.waitForTimeout(2000); //wait for 2 second
+  // await page.locator('#idNext').click();
+  await page1.getByRole('button', { name: 'Next', exact: true }).click();
+
+  console.log('Successfully navigated to Payment Tab!!!')
+  
+})();

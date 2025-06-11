@@ -64,14 +64,14 @@ const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';
       await page.waitForTimeout(995); 
       count -= 1; 
     }
-    console.log("Time Up! Saving Storage to '" + AUTH_FILE_NAME + "'."); 
+    console.log("Time Up! Saving Storage to '" + LOGIN_FILE_NAME + "'."); 
   }
 
   
   // Save auth state
-  await context.storageState({ path: "loginJsons/" + AUTH_FILE_NAME });
+  await context.storageState({ path: "loginJsons/" + LOGIN_FILE_NAME });
 
-  console.log("Login saved to '" + AUTH_FILE_NAME + "' !"); 
+  console.log("Login saved to '" + LOGIN_FILE_NAME + "' !"); 
   await browser.close();
 
 
