@@ -64,8 +64,8 @@ const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';
     await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
     // await page.pause(); //brings up playwright inspector 
-    await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
-    await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
+    // await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
+    // await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
 
     await page.getByRole('button', { name: 'Continue' }).click();
     
@@ -83,6 +83,8 @@ const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';
 
   
   // Save auth state
+
+  
   await context.storageState({ path: "loginJsons/" + LOGIN_FILE_NAME });
 
   console.log("Login saved to '" + LOGIN_FILE_NAME + "' !"); 
