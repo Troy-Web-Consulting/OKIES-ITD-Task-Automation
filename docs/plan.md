@@ -6,11 +6,19 @@
 - get through form as quick as possible and pause at payment 
 - opportunity to go back and fill certain things out 
 
+
+## Requirements
+- must pull login info, so can setup from a certain account
+
+## Future additions 
+
+## Learned 
+  - auth is the more intuitive way to store vs my-user-data
+
+## Storing login 
+  - if internal, do it yourself, if external, will automate
+
 ## Plan
 - parse through ryan files, and get familiar 
-see if you can store form fill out and just populate
-- operator assertions 
-
-
 
 - make doucmentation on how to install and run the script   

@@ -1,12 +1,7 @@
 const { chromium } = require('playwright');
 
-const STARTPAGE = 'https://okies-test.occ.ok.gov';
-/*MAIN*/
 (async () => {
-
-  
-  //Browser setup 
-  const context = await chromium.launchPersistentContext('./my-user-data', {
+  const browser = await chromium.launch({
     channel: 'chrome',
     headless: false,
     args: [
@@ -18,17 +13,10 @@ const STARTPAGE = 'https://okies-test.occ.ok.gov';
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     viewport: null
   });
+  const context = await browser.newContext({ storageState: 'auth.json' });
   const page = await context.newPage();
-  await page.evaluate(() => {
-    Object.defineProperty(navigator, 'webdriver', {
-      get: () => false,
-    });
-  });
 
-  
-
-
-  await page.goto(STARTPAGE);
-  // await page.pause(); //brings up playwright inspector 
-
-})
+  await page.goto('https://okies-test.occ.ok.gov/General/Home/Landing');
+  console.log('done')
+  // You're logged in already
+})();
