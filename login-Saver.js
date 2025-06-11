@@ -1,3 +1,14 @@
+/* 
+6/11/2025
+Creates a .json file that stores your specific OKIES login session into /loginJsons (note that if folder not present yet, it will make it on the first run) 
+allows for multiple accounts to be made. 
+
+INSTRUCTIONS
+- follow instructions in root directory 
+- set the setup variables and your good to go. 
+
+*/
+
 const { chromium } = require('playwright');
 
 const STARTPAGE = 'https://okies-test.occ.ok.gov';
@@ -11,8 +22,11 @@ const LOGIN_FILE_NAME = 'auth.json';
 const TIME_TO_LOGIN = 40; 
 /* Only fill in if logging in to external */
 const EMAIL = 'joseph.fodera@troyweb.com'; //numbers of emails per page
-const PASSWORD = 'hatjej-bamhip-3redVa'; //which email to start at, first is 1
+const PASSWORD = ''; //which email to start at, first is 1
 const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC'; 
+
+
+
 
 /*MAIN*/
 (async () => {
@@ -39,7 +53,7 @@ const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';
     });
   });
 
-  await page.goto('https://okies-test.occ.ok.gov/');
+  await page.goto(STARTPAGE);
 
   if(IS_EXTERNAL){
     //login externally
