@@ -5,7 +5,7 @@ const STARTPAGE = 'https://okies-test.occ.ok.gov';
 
 /* VARS TO SET*/
 const IS_EXTERNAL = true;   
-const AUTH_FILE_NAME = 'auth.json';  
+const LOGIN_FILE_NAME = 'auth.json';  
 
 /* Only fill in if logging in to internal */
 const TIME_TO_LOGIN = 40; 
@@ -69,7 +69,7 @@ const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';
 
   
   // Save auth state
-  await context.storageState({ path: AUTH_FILE_NAME });
+  await context.storageState({ path: "loginJsons/" + AUTH_FILE_NAME });
 
   console.log("Login saved to '" + AUTH_FILE_NAME + "' !"); 
   await browser.close();
