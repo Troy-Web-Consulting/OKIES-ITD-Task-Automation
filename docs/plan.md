@@ -17,6 +17,8 @@
 ## Learned 
   - auth is the more intuitive way to store vs my-user-data
   - USE PLAYWRIGHT INSPECTOR TO FIND ELEMENTS 
+  - role based finding is much easier than tabbing 
+  - will auto scroll when searching for elements by their CSS 
 
 ## Storing login 
   - if internal, do it yourself, if external, will automate

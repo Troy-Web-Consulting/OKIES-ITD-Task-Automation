@@ -3,23 +3,8 @@
 Takes you to the OKIES ITD payment tab as quick as possible by filling in the rest of the form with the bare minimum to get there 
 
 INSTRUCTIONS
+- follow instructions in root directory 
 - set the setup variables and your good to go. 
-- DO NOT HAVE STARTAT SET TO LESS THAN 1
-- note STARTPAGE SET FOR A QUERY PAGE
-
-MAITNENCE
--If button locations change can simply recalibrate pixels, only one neccesary would be the right arrow button 
-- check for pop ups throughout running 
--Signs in based on what login session info is saved based on my-user-data from last open with playwright 
--Requires user data that is not in repo
-
-GOOD TO NOTE
-- current issue in iterating to 3rd and 4th pages in continuim (after first page has already happened), but not needed for current scope 
-- Google groups message cooldown is exactly 3 minutes 
-- 10 messages at a time 
-- tab distance to next arrow differs per page
-- Potential issue when when returning to pages >1 after cooldown (extra tab) 
-  - think it is fixed but have not done a ton of testing on it 
 
 */
 
