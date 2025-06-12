@@ -12,8 +12,9 @@ INSTRUCTIONS
 
 /* VARS TO SET*/
 
-let EMAIL = 'joseph.fodera@troyweb.com'
-let PASSWORD = 'hatjej-bamhip-3redVa'
+let EMAIL = ''
+let PASSWORD = ''
+let ENVIRONMENT_SEL = ''
 
 
 
@@ -130,6 +131,29 @@ function askQuestion(query) {
 
 
 (async () => {
+
+  // if they are not set within file 
+  //setting arguments 
+  if(EMAIL == ''){
+    EMAIL = process.argv[2];  
+  }
+  if(PASSWORD == ''){
+    PASSWORD = process.argv[3];  
+  }
+  if(ENVIRONMENT_SEL == ''){
+    ENVIRONMENT_SEL = process.argv[4];  
+  }
+
+  ENVIRONMENT_SEL = ENVIRONMENT_SEL.toLowerCase(); 
+  
+  if(ENVIRONMENT_SEL !== 'test' && ENVIRONMENT_SEL !== 'uat'){
+    console.log("'https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/' is not supported, change your Environment selection. " );
+    process.exit(0);
+  }
+  
+
+  console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
+
   const browser = await chromium.launch({
     channel: 'chrome',
     headless: false,
@@ -147,7 +171,7 @@ function askQuestion(query) {
 
   //login
   
-  await page.goto('https://okies-test.occ.ok.gov/');
+  await page.goto('https://okies-'+ ENVIRONMENT_SEL+ '.occ.ok.gov/');
   await page.getByRole('button', { name: ' External User Access For' }).click();
   await page.getByRole('textbox', { name: 'Email Address' }).click();
   await page.getByRole('textbox', { name: 'Email Address' }).fill(EMAIL);
@@ -157,7 +181,7 @@ function askQuestion(query) {
   
   //ensures new page is open 
   const page1Promise = page.waitForEvent('popup');
-  console.log('Automation Paused');
+  console.log('\nAutomation Paused');
   console.log('You must select your Organization on your own, automation will continue from there!');
   // await page.evaluate(() => {
   //   alert("You must select your Organization on your own, automation will continue from there");
@@ -279,7 +303,8 @@ function askQuestion(query) {
   //Make Payment
   //make month and year >= current Month/year   
   const currentUrl = page1.url();
-  console.log("\n\n\nForms 1->9 have been Successfully filled with minimum requirements!!");
+  console.log("------------------------------------------------------------------------------------------");
+  console.log("\n\nForms 1->9 have been Successfully filled with minimum requirements!!");
   console.log("Automation Paused");
   console.log("Take your time to make any edits to any of the sections");
   
