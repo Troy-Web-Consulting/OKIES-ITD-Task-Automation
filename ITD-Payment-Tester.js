@@ -47,6 +47,8 @@ var randID = Math.floor(Math.random() * 1001);
 
 /* VARS TO SET*/
 const LOGIN_FILE_NAME = 'auth.json';  
+// const EMAIL = 'anthony.debonis+VALPOINT@troyweb.com'
+// const PASSWORD = 'tmq9KQN@vja!tdz6gtc'
 
 (async () => {
   const browser = await chromium.launch({
@@ -61,11 +63,18 @@ const LOGIN_FILE_NAME = 'auth.json';
     userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
     viewport: null
   });
-  const context = await browser.newContext({ storageState: 'loginJsons/' + LOGIN_FILE_NAME });
+  const context = await browser.newContext();
   const page = await context.newPage();
 
   //form information
-  await page.goto('https://okies-test.occ.ok.gov/General/Home/Landing');
+  
+  await page.goto('https://okies-test.occ.ok.gov/');
+  await page.getByRole('button', { name: ' External User Access For' }).click();
+  await page.getByRole('textbox', { name: 'Email Address' }).click();
+  await page.getByRole('textbox', { name: 'Email Address' }).fill('anthony.debonis+VALPOINT@troyweb.com');
+  await page.getByRole('textbox', { name: 'Password' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill('tmq9KQN@vja!tdz6gtc');
+  await page.getByRole('button', { name: 'Sign in' }).click();
   
   //ensures new page is open 
   const page1Promise = page.waitForEvent('popup');

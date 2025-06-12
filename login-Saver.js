@@ -67,7 +67,7 @@ const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';
     // await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
     // await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
 
-    await page.getByRole('button', { name: 'Continue' }).click();
+    // await page.getByRole('button', { name: 'Continue' }).click();
     
 
   }else{
