@@ -1,5 +1,10 @@
 # Instructions 
 
+  - Setup Demo Video Link 
+  - Using It Demo 
+  - Using It Demo (if you want to use VScode integrated terminal)
+  
+
 ## Setup (Only Once) 
 
 - note: you may be prompted to install git, that once be neccessarry
@@ -15,8 +20,10 @@
 #### 4. Install npm 
   - ```npm install```
 
-#### 5. Install Playwright 
+#### 5. Install Playwright dependencies 
   - ```npm install playwright```  
+#### 5. Install Playwright 
+  - ```npx playwright install```
 
 ## How to Run: 
 #### 1. Open Terminal/Powershell and navigate to root directory of this github:
@@ -53,7 +60,7 @@
     ```
     - when you are done making any edits you would like hit p and the automation will resume, finishing up payment and submission 
     - in order to cancel the script at any time, open the terminal and press CTRL+C
-  #### Error-Reporting Functionaly: 
+## Error-Reporting Functionaly: 
   - If things stopped being clicked on in your browser, look at your terminal and see if it has notified you that ```Automation Paused``` if it has not, wait 10s 
   - After 10s an error message similar to this will appear in the console: 
     ```
