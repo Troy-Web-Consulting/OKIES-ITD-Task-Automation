@@ -1,4 +1,4 @@
-# Instructions
+# Instructions - In Progress
 
 ## Setup
 
@@ -6,9 +6,6 @@
 
 npm install
 
-make sure permission
-
-account for not having multiple organizations
 
 #### 2. Open Terminal and navigate to root directory of this github:
  - ```cd .../OKIES-Payment-Automation```

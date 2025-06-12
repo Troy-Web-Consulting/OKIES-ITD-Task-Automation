@@ -2,11 +2,21 @@
 6/11/2025
 Takes you to the OKIES ITD payment tab as quick as possible by filling in the rest of the form with the bare minimum to get there 
 
+NOTES
+- Currently doesn't work if your in multiple organizations 
+
 INSTRUCTIONS
 - follow instructions in root directory 
 - set the setup variables and your good to go. 
 
 */
+
+/* VARS TO SET*/
+
+let EMAIL = 'joseph.fodera@troyweb.com'
+let PASSWORD = 'hatjej-bamhip-3redVa'
+
+const ERROR_TIMEOUT = 10000
 
 const { chromium } = require('playwright');
 
@@ -44,11 +54,17 @@ var permitType = PermitType.NON;
 
 var randID = Math.floor(Math.random() * 1001);
 
+const today = new Date(); 
+const ccExpirYear = (today.getFullYear() + 1).toString()
+let ccExpirMonth = ''
+if(today.getMonth() + 1 < 10){
+  ccExpirMonth = '0' + (today.getMonth() + 1).toString();
+}else{
+  ccExpirMonth = (today.getMonth() + 1).toString();
+}
+console.log(ccExpirMonth);
+console.log(ccExpirYear);
 
-/* VARS TO SET*/
-const LOGIN_FILE_NAME = 'auth.json';  
-// const EMAIL = 'anthony.debonis+VALPOINT@troyweb.com'
-// const PASSWORD = 'tmq9KQN@vja!tdz6gtc'
 
 (async () => {
   const browser = await chromium.launch({
@@ -71,17 +87,23 @@ const LOGIN_FILE_NAME = 'auth.json';
   await page.goto('https://okies-test.occ.ok.gov/');
   await page.getByRole('button', { name: ' External User Access For' }).click();
   await page.getByRole('textbox', { name: 'Email Address' }).click();
-  await page.getByRole('textbox', { name: 'Email Address' }).fill('anthony.debonis+VALPOINT@troyweb.com');
+  await page.getByRole('textbox', { name: 'Email Address' }).fill(EMAIL);
   await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill('tmq9KQN@vja!tdz6gtc');
+  await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
   
   //ensures new page is open 
   const page1Promise = page.waitForEvent('popup');
+  console.log('You must select your Organization on your own, automation will continue from there');
+  // await page.evaluate(() => {
+  //   alert("You must select your Organization on your own, automation will continue from there");
+  // });
+
   await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
   //ensures new page/tab is open
   const page1 = await page1Promise;
   await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
+  page1.setDefaultTimeout(ERROR_TIMEOUT);
   //Set Hole Type as specificied above
   await page1.getByRole('option', { name: 'Drill' }).click();
   await page1.locator('span').filter({ hasText: 'Directional HoleHorizontal' }).getByLabel('select').click();
@@ -170,13 +192,62 @@ const LOGIN_FILE_NAME = 'auth.json';
 
   //Operator Assertions
   await page1.waitForTimeout(1000); //wait for 1 second
-  for(let i = 0; i < 47; i++){
+  for(let i = 0; i < 53; i++){
     await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
   }
   await page1.getByRole('button', { name: 'Next' }).click();
 
+
+  
+
+  //make month and year >= current Month/year   
+
+    await page.goto('https://okies-test.occ.ok.gov/General/Home/Landing');
+  await page1.getByRole('button', { name: 'Pay by Credit Card' }).click();
+  await page1.getByRole('button', { name: 'Confirm', exact: true }).click();
+  // goes to next page 
+
+
+  await page1.waitForLoadState();
+
+  await page1.getByLabel('Payment Type *').selectOption('CC');
+  await page1.pause(); 
+  await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.getByRole('textbox', { name: 'First Name *' }).fill('Name');
+
+  await page1.getByRole('textbox', { name: 'Last Name *' }).fill('LastName');
+
+  await page1.getByRole('textbox', { name: 'Address *' }).fill('135 Mohawk St, Cohoes, NY 12047');
+
+  await page1.getByRole('textbox', { name: 'City *' }).fill('Cohoes');
+  await page1.getByLabel('State *').selectOption('NY');
+
+  await page1.getByRole('textbox', { name: 'ZIP/Postal Code *' }).fill('12047');
+  await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.getByRole('textbox', { name: 'Credit Card Number *' }).fill('4111111111111111');
+
+   
+  
+  //must be later than the current date 
+
+
+  console.log('0' + (today.getMonth() + 1).toString()); 
+  await page1.pause();
+  await page1.getByLabel('Expiration Month *').selectOption((today.getMonth() + 1).toString());
+  await page1.getByLabel('Expiration Year *').selectOption((today.getFullYear() + 1).toString());
+  await page1.getByRole('textbox', { name: 'Security Code *' }).fill('921');
+  await page1.getByRole('textbox', { name: 'Name on Credit Card *' }).fill('John Smith');
+
+  await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.getByRole('button', { name: 'Submit Payment' }).click();
+  await page1.getByRole('button', { name: 'OK' }).click();
+
+
+
+
   // Form Submit
   await page1.waitForTimeout(1000); //wait for 1 second
+  
   await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
   await page1.getByRole('button', { name: 'Submit', exact: true }).click();
   await page1.waitForTimeout(2000); //wait for 2 second
