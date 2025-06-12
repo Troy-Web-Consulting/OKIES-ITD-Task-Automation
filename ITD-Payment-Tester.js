@@ -12,9 +12,9 @@ INSTRUCTIONS
 
 /* VARS TO SET*/
 
-let EMAIL = ''
-let PASSWORD = ''
-let ENVIRONMENT_SEL = ''
+let EMAIL = '' //email you want to log into okies with
+let PASSWORD = '' //password you want to log into okies with 
+let ENVIRONMENT_SEL = '' // valid ones are 'test' and 'uat' 
 
 
 
@@ -52,7 +52,7 @@ const PermitType = {
   TEMP : 'Temporary',
 }
 var permitType = PermitType.NON;
-const ERROR_TIMEOUT = 10000 // how long in miliseconds to get stack trace if element cannot be found 
+const ERROR_TIMEOUT = 5000 // how long in miliseconds to get stack trace if element cannot be found 
 var randID = Math.floor(Math.random() * 1001);
 
 //defining credit cart vars
@@ -62,7 +62,7 @@ let ccExpirMonth = ''
 if(today.getMonth() + 1 < 10){
   ccExpirMonth = '0' + (today.getMonth() + 1).toString();
 }else{
-  ccExpirMonth = (today.getMonth() + 1).toString();
+  ccExpirMonth = (today.getMonth() + 1).toString(); 
 }
 
 
@@ -72,7 +72,7 @@ async function makePayment(page1, curFormURL){
   // console.log('Current URL:', currentUrl);
   //delimits at arguments so can just go to ID 
 
-  let firstHalf = curFormUrl.split('&');
+  let firstHalf = curFormURL.split('&');
   // console.log(firstHalf); 
   await page1.goto(firstHalf[0]); 
   await page1.waitForLoadState();
@@ -169,167 +169,171 @@ function askQuestion(query) {
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  //login
-  
-  await page.goto('https://okies-'+ ENVIRONMENT_SEL+ '.occ.ok.gov/');
-  await page.getByRole('button', { name: ' External User Access For' }).click();
-  await page.getByRole('textbox', { name: 'Email Address' }).click();
-  await page.getByRole('textbox', { name: 'Email Address' }).fill(EMAIL);
-  await page.getByRole('textbox', { name: 'Password' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  
-  //ensures new page is open 
-  const page1Promise = page.waitForEvent('popup');
-  console.log('\nAutomation Paused');
-  console.log('You must select your Organization on your own, automation will continue from there!');
-  // await page.evaluate(() => {
-  //   alert("You must select your Organization on your own, automation will continue from there");
-  // });
+  //Entire thing in Try-Catch block so that browser will stay open
+  try{
+    //login
+    await page.goto('https://okies-'+ ENVIRONMENT_SEL+ '.occ.ok.gov/');
+    await page.getByRole('button', { name: ' External User Access For' }).click();
+    await page.getByRole('textbox', { name: 'Email Address' }).click();
+    await page.getByRole('textbox', { name: 'Email Address' }).fill(EMAIL);
+    await page.getByRole('textbox', { name: 'Password' }).click();
+    await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
+    await page.getByRole('button', { name: 'Sign in' }).click();
+    
+    //ensures new page is open 
+    const page1Promise = page.waitForEvent('popup');
+    console.log('\nAutomation Paused');
+    console.log('You must select your Organization on your own, automation will continue from there!');
+    // await page.evaluate(() => {
+    //   alert("You must select your Organization on your own, automation will continue from there");
+    // });
 
-  await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
-  console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
-  
+    await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
+    console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
+    
 
-  //form information
-  //ensures new page/tab is open
-  const page1 = await page1Promise;
-  await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
-  page1.setDefaultTimeout(ERROR_TIMEOUT);
-  //Set Hole Type as specificied above
-  await page1.getByRole('option', { name: 'Drill' }).click();
-  await page1.locator('span').filter({ hasText: 'Directional HoleHorizontal' }).getByLabel('select').click();
-  await page1.getByRole('option', { name: holeType }).click();
-  //Set Well Type as specified above
-  await page1.getByRole('combobox', { name: 'Type of Well*' }).getByLabel('select').click();
-  await page1.getByRole('option', { name: wellType }).first().click();
-  //Set Permit Type as specified above
-  await page1.locator('div:nth-child(26) > .k-picker > .k-input-button').click();
-  await page1.getByRole('option', { name: permitType, exact: true  }).click();
-  await page1.getByRole('button', { name: 'Save & Continue' }).click();
-  await page1.getByRole('button', { name: 'Confirm' }).click();
-  console.log('1. Form Information Populate!');
-
-
-  //Operator Info
-  await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
-  console.log('2. Operator Info Populated!');
+    //form information
+    //ensures new page/tab is open
+    const page1 = await page1Promise;
+    await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
+    page1.setDefaultTimeout(ERROR_TIMEOUT);
+    //Set Hole Type as specificied above
+    await page1.getByRole('option', { name: 'Drill' }).click();
+    await page1.locator('span').filter({ hasText: 'Directional HoleHorizontal' }).getByLabel('select').click();
+    await page1.getByRole('option', { name: holeType }).click();
+    //Set Well Type as specified above
+    await page1.getByRole('combobox', { name: 'Type of Well*' }).getByLabel('select').click();
+    await page1.getByRole('option', { name: wellType }).first().click();
+    //Set Permit Type as specified above
+    await page1.locator('div:nth-child(26) > .k-picker > .k-input-button').click();
+    await page1.getByRole('option', { name: permitType, exact: true  }).click();
+    await page1.getByRole('button', { name: 'Save & Continue' }).click();
+    await page1.getByRole('button', { name: 'Confirm' }).click();
+    console.log('1. Form Information Populate!');
 
 
-  //Well Information
-  await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.getByTestId('wi-well-name').click();
-  await page1.getByTestId('wi-well-name').fill(wellType + ' ' + holeType + ' ' + permitType + ' ' + randID);
-  await page1.getByTestId('wi-well-number').click();
-  await page1.getByTestId('wi-well-number').fill('123');
-  await page1.locator('#SectionContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: '01' }).click();
-  await page1.locator('#TownshipContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: '01N' }).click();
-  await page1.locator('#RangeContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: '01E' }).click();
-  await page1.locator('#MeridianContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: 'CM' }).click();
-  await page1.locator('#CountyContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: 'Choctaw' }).click();
-  await page1.locator('#NorthSouthOffsetContainer').getByRole('spinbutton').click();
-  await page1.getByTestId('wi-north-south-offset').fill('123');
-  await page1.locator('#NorthSouthContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: 'North' }).click();
-  await page1.locator('#EastWestOffsetContainer').getByRole('spinbutton').click();
-  await page1.getByTestId('wi-east-west-offset').fill('123');
-  await page1.locator('#EastWestContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: 'East' }).click();
-  await page1.locator('#Quarter').click();
-  await page1.locator('#Quarter').fill('1');
-  await page1.locator('#LatitudeContainer').getByRole('spinbutton').click();
-  await page1.getByTestId('wl-latitude').fill('123');
-  await page1.locator('#LongitudeContainer').getByRole('spinbutton').click();
-  await page1.getByTestId('wl-longitude').fill('123');
-  await page1.locator('#GroundElevationContainer').getByRole('spinbutton').click();
-  await page1.getByTestId('wi-ground-information').fill('123');
-  await page1.locator('#BaseTreatableWaterContainer').getByRole('spinbutton').click();
-  await page1.getByTestId('wi-base-treatable-water').fill('123');
-  await page1.locator('#PropertyBoundaryDistanceContainer').getByRole('spinbutton').click();
-  await page1.getByTestId('wl-property-distance').fill('123');
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
-  console.log('3. Well Information Populated!');
+    //Operator Info
+    await page1.waitForLoadState();
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    console.log('2. Operator Info Populated!');
 
 
-  //Geologic Info
-  await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.getByRole('button', { name: 'Actions' }).click();
-  await page1.getByRole('link', { name: 'Add Zone' }).click();
-  await page1.getByRole('combobox', { name: 'Zone Category*' }).getByLabel('select').click();
-  await page1.getByRole('option', { name: 'Target' }).click();
-  await page1.getByRole('combobox', { name: 'Zone Name*' }).getByLabel('select').click();
-  await page1.getByText('1ST BROMIDE - 202BRMD1').first().click();
-  await page1.getByRole('button', { name: 'Save' }).nth(1).click();
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
-  console.log('4. Geologic Info Populated!');
+    //Well Information
+    await page1.waitForTimeout(1000); //wait for 1 second
+    await page1.getByTestId('wi-well-name').click();
+    await page1.getByTestId('wi-well-name').fill(wellType + ' ' + holeType + ' ' + permitType + ' ' + randID);
+    await page1.getByTestId('wi-well-number').click();
+    await page1.getByTestId('wi-well-number').fill('123');
+    await page1.locator('#SectionContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: '01' }).click();
+    await page1.locator('#TownshipContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: '01N' }).click();
+    await page1.locator('#RangeContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: '01E' }).click();
+    await page1.locator('#MeridianContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: 'CM' }).click();
+    await page1.locator('#CountyContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: 'Choctaw' }).click();
+    await page1.locator('#NorthSouthOffsetContainer').getByRole('spinbutton').click();
+    await page1.getByTestId('wi-north-south-offset').fill('123');
+    await page1.locator('#NorthSouthContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: 'North' }).click();
+    await page1.locator('#EastWestOffsetContainer').getByRole('spinbutton').click();
+    await page1.getByTestId('wi-east-west-offset').fill('123');
+    await page1.locator('#EastWestContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: 'East' }).click();
+    await page1.locator('#Quarter').click();
+    await page1.locator('#Quarter').fill('1');
+    await page1.locator('#LatitudeContainer').getByRole('spinbutton').click();
+    await page1.getByTestId('wl-latitude').fill('123');
+    await page1.locator('#LongitudeContainer').getByRole('spinbutton').click();
+    await page1.getByTestId('wl-longitude').fill('123');
+    await page1.locator('#GroundElevationContainer').getByRole('spinbutton').click();
+    await page1.getByTestId('wi-ground-information').fill('123');
+    await page1.locator('#BaseTreatableWaterContainer').getByRole('spinbutton').click();
+    await page1.getByTestId('wi-base-treatable-water').fill('123');
+    await page1.locator('#PropertyBoundaryDistanceContainer').getByRole('spinbutton').click();
+    await page1.getByTestId('wl-property-distance').fill('123');
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    console.log('3. Well Information Populated!');
 
-  //Order Notations
-  await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.locator('#NoticeGivenContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: 'Yes' }).click();
-  await page1.locator('#DoesApplicantDifferContainer').getByRole('button', { name: 'select' }).click();
-  await page1.getByRole('option', { name: 'No', exact: true }).click();
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
-  console.log('5. Order Notations Populated!');
 
-  //Pits + Features and Cement + Document Upload
-  await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
-  await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
-  await page1.waitForTimeout(1000); //wait for 1 second
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
-  console.log('6. Pits Populated!');
-  console.log('7. Features and Cement skipped (not neccesarry for minimum)!');
-  console.log('8. Document Upload (not neccesarry for minimum)!');
+    //Geologic Info
+    await page1.waitForTimeout(1000); //wait for 1 second
+    await page1.getByRole('button', { name: 'Actions' }).click();
+    await page1.getByRole('link', { name: 'Add Zone' }).click();
+    await page1.getByRole('combobox', { name: 'Zone Category*' }).getByLabel('select').click();
+    await page1.getByRole('option', { name: 'Target' }).click();
+    await page1.getByRole('combobox', { name: 'Zone Name*' }).getByLabel('select').click();
+    await page1.getByText('1ST BROMIDE - 202BRMD1').first().click();
+    await page1.getByRole('button', { name: 'Save' }).nth(1).click();
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    console.log('4. Geologic Info Populated!');
+
+    //Order Notations
+    await page1.waitForTimeout(1000); //wait for 1 second
+    await page1.locator('#NoticeGivenContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: 'Yes' }).click();
+    await page1.locator('#DoesApplicantDifferContainer').getByRole('button', { name: 'select' }).click();
+    await page1.getByRole('option', { name: 'No', exact: true }).click();
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    console.log('5. Order Notations Populated!');
+
+    //Pits + Features and Cement + Document Upload
+    await page1.waitForTimeout(1000); //wait for 1 second
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    await page1.waitForTimeout(1000); //wait for 1 second
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    await page1.waitForTimeout(1000); //wait for 1 second
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    console.log('6. Pits Populated!');
+    console.log('7. Features and Cement skipped (not neccesarry for minimum)!');
+    console.log('8. Document Upload (not neccesarry for minimum)!');
 
 
-  //Operator Assertions
-  await page1.waitForTimeout(1000); //wait for 1 second
-  for(let i = 0; i < 53; i++){
-    await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
+    //Operator Assertions
+    await page1.waitForTimeout(1000); //wait for 1 second
+    for(let i = 0; i < 53; i++){
+      await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
+    }
+    await page1.getByRole('button', { name: 'Next' }).click();
+    console.log('9. Operator Assertions Populated!');
+
+
+    
+    //Make Payment
+    //make month and year >= current Month/year   
+    const currentUrl = page1.url();
+    console.log("------------------------------------------------------------------------------------------");
+    console.log("\nForms 1->9 have been Successfully filled with minimum requirements!!");
+    console.log("Automation Paused");
+    console.log("Take your time to make any edits to any of the sections");
+    
+    let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
+    while (input.toLowerCase() !== 'p'){
+      input = await askQuestion("Did not recognize that command, try again!\n");
+    }
+
+    console.log('Automation Resumed...');
+
+    await makePayment(page1, currentUrl); 
+    console.log('10. Payment made!');
+
+
+    
+    // Form Submit
+    await page1.getByRole('button', { name: 'Form Submit' }).click();
+    
+    await page1.waitForTimeout(1000); //wait for 1 second
+    page1.setDefaultTimeout(ERROR_TIMEOUT);
+    await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
+    await page1.getByRole('button', { name: 'Submit', exact: true }).click();
+    await page1.waitForTimeout(2000); //wait for 2 seconds
+    console.log('Form Successfully Submitted!!')
+  }catch (error){
+    console.log("------------------------------------------------------------------------------------------");
+    console.error('\nError occurred:', error);
+    console.log('Browser will stay open for debugging.\nHit Control+C to Terminate current script and try again');
   }
-  await page1.getByRole('button', { name: 'Next' }).click();
-  console.log('9. Operator Assertions Populated!');
-
-
-  
-  //Make Payment
-  //make month and year >= current Month/year   
-  const currentUrl = page1.url();
-  console.log("------------------------------------------------------------------------------------------");
-  console.log("\n\nForms 1->9 have been Successfully filled with minimum requirements!!");
-  console.log("Automation Paused");
-  console.log("Take your time to make any edits to any of the sections");
-  
-  let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
-  while (input.toLowerCase() !== 'p'){
-    input = await askQuestion("Did not recognize that command, try again!\n");
-  }
-
-  console.log('Automation Resumed...');
-
-  await makePayment(page1, currentUrl); 
-  console.log('10. Payment made!');
-
-
-  
-  // Form Submit
-  await page1.getByRole('button', { name: 'Form Submit' }).click();
-  
-  await page1.waitForTimeout(1000); //wait for 1 second
-  page1.setDefaultTimeout(ERROR_TIMEOUT);
-  await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
-  await page1.getByRole('button', { name: 'Submit', exact: true }).click();
-  await page1.waitForTimeout(2000); //wait for 2 seconds
-  // await page.locator('#idNext').click();
-
-  console.log('Form Successfully Submitted!!')
   
 })();

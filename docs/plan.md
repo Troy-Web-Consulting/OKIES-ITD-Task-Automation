@@ -14,6 +14,7 @@
 - clean up files with functions and such 
 - randomizing, yes/no selections
 - make 47 a const
+- change things to await page1.waitForLoadState();
 
 ## Learned 
   - auth is the more intuitive way to store vs my-user-data
@@ -51,6 +52,9 @@
     - ask for which other permuations would be most helpful
     - don't touch anything on screen while it is running 
     - disclaimer, if new edits made to site form may break
+    - test uat before good
+
+  - internal login support 
   
 
 
