@@ -16,6 +16,9 @@
 - make 47 a const
 - change things to await page1.waitForLoadState();
 - psuedo support
+- - add in alerts in actual browser 
+   - have kevin change repo name 
+    
 
 ## Learned 
   - auth is the more intuitive way to store vs my-user-data
@@ -39,34 +42,43 @@
       - copy URL and go to: https://okies-test.occ.ok.gov/OnlineForm/ViewProfileRequest/Create?requestID=1197 then initiate payment by clicking on payment to left 
 
     - in order to do so, account for organizations √
-    - also make a note of allowing permissions in certain machines 
-    - and different NPM format
-    - update documentation 
-    - note the permutation in documentation 
-    - add in alerts in actual browser 
-    - in docs note when something failed 
-    - note that opens up a chrome instance with none of your pluggings 
-    - arguments to terminal 
-    - note Control c to cancel 
-    - see if next button for payment has been implemented
-    - document form permutation this automates 
-    - ask for which other permuations would be most helpful
-    - don't touch anything on screen while it is running 
-    - disclaimer, if new edits made to site form may break
-    - test uat before good
-    - note that if it stops wait 10s and it will give you an error 
-    - see if selecting Organization times out 
-    - note going to have to be updated on new deployments
-      - list what it is currently supported for 
-      - Obviously, both are living environments, so if 
-    - stay up on test and UAT changes
+    - also make a note of allowing permissions in certain machines √
+    - and different NPM format √
+    - update documentation √
+    - note the permutation in documentation √
+    - note that opens up a chrome instance with none of your pluggings √
+    - arguments to terminal √
+    - note Control c to cancel√ 
+    - document form permutation this automates √
+    - ask for which other permuations would be most helpful √
+    - don't touch anything on screen while it is running √
+    - disclaimer, if new edits made to site form may break √
+    - test uat before good √
+    - note that if it stops wait 10s and it will give you an error √
+    - see if selecting Organization times out √
+    - note going to have to be updated on new deployments √
+      - Obviously, both are living environments, so if √
+    - stay up on test and UAT changes √
     - reach out to the BAs about this 
     - write the commands exactly as such, if you need sudo, reach out to me
     - If get error: Error occurred: locator.click: Timeout 10000ms exceeded. that means a page took too long to load, so try again. If issue persists, you may have found a bug!
     - can run multiple scripts at once
+ 
+
+### Getting people onboarded: 
+  - finish docs
+  - record using demo (BA-terminal, QA- Visual studio code), with things I need from them if they are interested, if any issues reachout, I'll be very responsive, note it will break when test/uat are updated 
+  - send to main OKIES channel 
+  - update Anthony 
+  - record setup demo 
+
+  
+  - send out invites 
+  - github desktop 
+  - accept invitation via email 
 
 Fix assumption that people are in an organization for multiple profile version \
-  
+
 
 
 do demo in vs code 
