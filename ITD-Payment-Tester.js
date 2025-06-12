@@ -54,6 +54,7 @@ var permitType = PermitType.NON;
 
 var randID = Math.floor(Math.random() * 1001);
 
+//defining credit cart vars
 const today = new Date(); 
 const ccExpirYear = (today.getFullYear() + 1).toString()
 let ccExpirMonth = ''
@@ -62,8 +63,7 @@ if(today.getMonth() + 1 < 10){
 }else{
   ccExpirMonth = (today.getMonth() + 1).toString();
 }
-console.log(ccExpirMonth);
-console.log(ccExpirYear);
+
 
 
 (async () => {
@@ -94,6 +94,7 @@ console.log(ccExpirYear);
   
   //ensures new page is open 
   const page1Promise = page.waitForEvent('popup');
+  console.log('Automation Pause');
   console.log('You must select your Organization on your own, automation will continue from there');
   // await page.evaluate(() => {
   //   alert("You must select your Organization on your own, automation will continue from there");
@@ -211,49 +212,40 @@ console.log(ccExpirYear);
   await page1.waitForLoadState();
 
   await page1.getByLabel('Payment Type *').selectOption('CC');
-  await page1.pause(); 
   await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.waitForTimeout(700);
   await page1.getByRole('textbox', { name: 'First Name *' }).fill('Name');
-
   await page1.getByRole('textbox', { name: 'Last Name *' }).fill('LastName');
-
   await page1.getByRole('textbox', { name: 'Address *' }).fill('135 Mohawk St, Cohoes, NY 12047');
-
   await page1.getByRole('textbox', { name: 'City *' }).fill('Cohoes');
   await page1.getByLabel('State *').selectOption('NY');
-
   await page1.getByRole('textbox', { name: 'ZIP/Postal Code *' }).fill('12047');
   await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.waitForTimeout(700);
+
   await page1.getByRole('textbox', { name: 'Credit Card Number *' }).fill('4111111111111111');
 
-   
-  
   //must be later than the current date 
-
-
-  console.log('0' + (today.getMonth() + 1).toString()); 
-  await page1.pause();
-  await page1.getByLabel('Expiration Month *').selectOption((today.getMonth() + 1).toString());
-  await page1.getByLabel('Expiration Year *').selectOption((today.getFullYear() + 1).toString());
+  await page1.getByLabel('Expiration Month *').selectOption(ccExpirMonth);
+  await page1.getByLabel('Expiration Year *').selectOption(ccExpirYear);
   await page1.getByRole('textbox', { name: 'Security Code *' }).fill('921');
   await page1.getByRole('textbox', { name: 'Name on Credit Card *' }).fill('John Smith');
-
+  //edited to allow for payment validation
+  page1.setDefaultTimeout(40000); 
   await page1.getByRole('button', { name: 'Next' }).click();
   await page1.getByRole('button', { name: 'Submit Payment' }).click();
   await page1.getByRole('button', { name: 'OK' }).click();
-
-
-
-
+  await page1.pause(); 
+  await page1.getByRole('button', { name: 'Form Submit' }).click();
+  
   // Form Submit
   await page1.waitForTimeout(1000); //wait for 1 second
-  
-  await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
-  await page1.getByRole('button', { name: 'Submit', exact: true }).click();
+  page1.setDefaultTimeout(ERROR_TIMEOUT);
+  // await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
+  // await page1.getByRole('button', { name: 'Submit', exact: true }).click();
   await page1.waitForTimeout(2000); //wait for 2 second
   // await page.locator('#idNext').click();
-  await page1.getByRole('button', { name: 'Next', exact: true }).click();
 
-  console.log('Successfully navigated to Payment Tab!!!')
+  console.log('Bear Minimum of form failed out ')
   
 })();

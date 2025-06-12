@@ -31,7 +31,12 @@
 ## New Goals 
   - save multiple Login functionality to a branch, for further development 
   - get something out that is bare bones, put OKIES login at the Top and takes you to payment 
-    - in order to do so, account for organizations 
+    - fill out form to get to bear minimum 
+    - notify user to click p to pay 
+    - p command to pay (o)
+      - copy URL and go to: https://okies-test.occ.ok.gov/OnlineForm/ViewProfileRequest/Create?requestID=1197 then initiate payment by clicking on payment to left 
+
+    - in order to do so, account for organizations √
     - also make a note of allowing permissions in certain machines 
     - and different NPM format
     - update documentation 
@@ -39,6 +44,7 @@
     - add in alerts in actual browser 
     - in docs note when something failed 
     - note that opens up a chrome instance with none of your pluggings 
+    - arguments to terminal 
   - logic to say stop here when running it with an argument 
 
   - Try to get something running that works within the current instance of chrome 
