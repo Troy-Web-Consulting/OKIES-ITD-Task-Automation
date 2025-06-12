@@ -15,6 +15,7 @@
 - randomizing, yes/no selections
 - make 47 a const
 - change things to await page1.waitForLoadState();
+- psuedo support
 
 ## Learned 
   - auth is the more intuitive way to store vs my-user-data
@@ -32,8 +33,8 @@
 ## New Goals 
   - save multiple Login functionality to a branch, for further development 
   - get something out that is bare bones, put OKIES login at the Top and takes you to payment 
-    - fill out form to get to bear minimum 
-    - notify user to click p to pay 
+    - fill out form to get to bear minimum  √
+    - notify user to click p to pay √
     - p command to pay (o)
       - copy URL and go to: https://okies-test.occ.ok.gov/OnlineForm/ViewProfileRequest/Create?requestID=1197 then initiate payment by clicking on payment to left 
 
@@ -53,6 +54,24 @@
     - don't touch anything on screen while it is running 
     - disclaimer, if new edits made to site form may break
     - test uat before good
+    - note that if it stops wait 10s and it will give you an error 
+    - see if selecting Organization times out 
+    - note going to have to be updated on new deployments
+      - list what it is currently supported for 
+      - Obviously, both are living environments, so if 
+    - stay up on test and UAT changes
+    - reach out to the BAs about this 
+    - write the commands exactly as such, if you need sudo, reach out to me
+    - If get error: Error occurred: locator.click: Timeout 10000ms exceeded. that means a page took too long to load, so try again. If issue persists, you may have found a bug!
+    - can run multiple scripts at once
+
+Fix assumption that people are in an organization for multiple profile version \
+  
+
+
+do demo in vs code 
+
+    
 
   - internal login support 
   
@@ -63,7 +82,7 @@
   2. Better debugging, know exactly where click/entry failed (just parsing the messge)
   3. Controller view, user can type in a command 1,2,3,4 to fill out corresponding section 
   4. Get User Data in so can do all of above + have chrome exentions 
-  5. Fit to format of plugging automation scripts 
+  5. Fit to format of plugging automation scripts - encorporate their logging
 
 
   - add in tells you where you went wrong functionality on 500

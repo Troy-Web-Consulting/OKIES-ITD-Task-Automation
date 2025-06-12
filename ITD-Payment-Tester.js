@@ -1,6 +1,7 @@
 /* 
 6/11/2025
-Takes you to the OKIES ITD payment tab as quick as possible by filling in the rest of the form with the bare minimum to get there. 
+Takes you to the OKIES ITD payment tab as quick as possible by filling in the rest of the form with the minimum requirements to get you there. Pauses at payment so that
+you can make any edits neccessary, then if you prompt it with 'p' will finish up the form for you 
 
 
 
@@ -52,7 +53,8 @@ const PermitType = {
   TEMP : 'Temporary',
 }
 var permitType = PermitType.NON;
-const ERROR_TIMEOUT = 5000 // how long in miliseconds to get stack trace if element cannot be found 
+const ERROR_TIMEOUT = 10000 // how long in miliseconds to get stack trace if element cannot be found in general section of clicking through 
+let OPERATOR_ASSERTION_CHECKS = undefined // dependant on environment
 var randID = Math.floor(Math.random() * 1001);
 
 //defining credit cart vars
@@ -75,20 +77,23 @@ async function makePayment(page1, curFormURL){
   let firstHalf = curFormURL.split('&');
   // console.log(firstHalf); 
   await page1.goto(firstHalf[0]); 
+  page1.setDefaultTimeout(30000);
   await page1.waitForLoadState();
+  page1.setDefaultTimeout(ERROR_TIMEOUT);
 
 
   //click get payment
   await page1.getByRole('button', { name: 'Payment' }).click();
-  await page1.waitForTimeout(2000) // wait to load 
+  await page1.waitForTimeout(500) // wait to load 
 
   
 
   await page1.getByRole('button', { name: 'Pay by Credit Card' }).click();
   await page1.getByRole('button', { name: 'Confirm', exact: true }).click();
 
-
+  page1.setDefaultTimeout(30000);
   await page1.waitForLoadState();
+  page1.setDefaultTimeout(ERROR_TIMEOUT);
 
   await page1.getByLabel('Payment Type *').selectOption('CC');
   await page1.getByRole('button', { name: 'Next' }).click();
@@ -145,8 +150,13 @@ function askQuestion(query) {
   }
 
   ENVIRONMENT_SEL = ENVIRONMENT_SEL.toLowerCase(); 
-  
-  if(ENVIRONMENT_SEL !== 'test' && ENVIRONMENT_SEL !== 'uat'){
+
+  //checking URL is right and making uat/test changes 
+  if(ENVIRONMENT_SEL == 'test'){
+    OPERATOR_ASSERTION_CHECKS = 53; 
+  }else if(ENVIRONMENT_SEL == 'uat'){
+    OPERATOR_ASSERTION_CHECKS = 53; 
+  }else{
     console.log("'https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/' is not supported, change your Environment selection. " );
     process.exit(0);
   }
@@ -163,10 +173,8 @@ function askQuestion(query) {
       '--no-sandbox',
       '--disable-infobars'   
     ],
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-    viewport: null
   });
-  const context = await browser.newContext();
+  const context = await browser.newContext({  viewport: null});
   const page = await context.newPage();
 
   //Entire thing in Try-Catch block so that browser will stay open
@@ -181,6 +189,7 @@ function askQuestion(query) {
     await page.getByRole('button', { name: 'Sign in' }).click();
     
     //ensures new page is open 
+    page.setDefaultTimeout(180000); //have 2 minutes to select 
     const page1Promise = page.waitForEvent('popup');
     console.log('\nAutomation Paused');
     console.log('You must select your Organization on your own, automation will continue from there!');
@@ -213,7 +222,9 @@ function askQuestion(query) {
 
 
     //Operator Info
+    page1.setDefaultTimeout(30000);
     await page1.waitForLoadState();
+    page1.setDefaultTimeout(ERROR_TIMEOUT);
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
     console.log('2. Operator Info Populated!');
 
@@ -293,7 +304,7 @@ function askQuestion(query) {
 
     //Operator Assertions
     await page1.waitForTimeout(1000); //wait for 1 second
-    for(let i = 0; i < 53; i++){
+    for(let i = 0; i < OPERATOR_ASSERTION_CHECKS; i++){
       await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
     }
     await page1.getByRole('button', { name: 'Next' }).click();
@@ -329,7 +340,9 @@ function askQuestion(query) {
     await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
     await page1.getByRole('button', { name: 'Submit', exact: true }).click();
     await page1.waitForTimeout(2000); //wait for 2 seconds
-    console.log('Form Successfully Submitted!!')
+    console.log("------------------------------------------------------------------------------------------");
+    console.log('\nForm Successfully Submitted!!')
+    console.log('Hit Ctrl+C to terminate the Script and close the window (so you can run again!)')
   }catch (error){
     console.log("------------------------------------------------------------------------------------------");
     console.error('\nError occurred:', error);
