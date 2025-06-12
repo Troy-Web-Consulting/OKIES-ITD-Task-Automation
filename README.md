@@ -22,7 +22,7 @@
 
 #### 5. Install Playwright dependencies 
   - ```npm install playwright```  
-#### 5. Install Playwright 
+#### 6. Install Playwright 
   - ```npx playwright install```
 
 ## How to Run: 
