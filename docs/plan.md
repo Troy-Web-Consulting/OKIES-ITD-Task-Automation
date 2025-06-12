@@ -60,13 +60,13 @@
       - Obviously, both are living environments, so if √
     - stay up on test and UAT changes √
     - reach out to the BAs about this 
-    - write the commands exactly as such, if you need sudo, reach out to me
-    - If get error: Error occurred: locator.click: Timeout 10000ms exceeded. that means a page took too long to load, so try again. If issue persists, you may have found a bug!
-    - can run multiple scripts at once
+    - write the commands exactly as such, if you need sudo, reach out to me √
+    - If get error: Error occurred: locator.click: Timeout 10000ms exceeded. that means a page took too long to load, so try again. If issue persists, you may have found a bug! √
+    - can run multiple scripts at once√
  
 
 ### Getting people onboarded: 
-  - finish docs
+  - finish docs √
   - record using demo (BA-terminal, QA- Visual studio code), with things I need from them if they are interested, if any issues reachout, I'll be very responsive, note it will break when test/uat are updated 
   - send to main OKIES channel 
   - update Anthony 
