@@ -1,13 +1,12 @@
 /* 
 6/11/2025
-Takes you to the OKIES ITD payment tab as quick as possible by filling in the rest of the form with the bare minimum to get there 
+Takes you to the OKIES ITD payment tab as quick as possible by filling in the rest of the form with the bare minimum to get there. 
 
-NOTES
-- Currently doesn't work if your in multiple organizations 
+
 
 INSTRUCTIONS
 - follow instructions in root directory 
-- set the setup variables and your good to go. 
+- set the Email and password and your good to go
 
 */
 
@@ -16,9 +15,10 @@ INSTRUCTIONS
 let EMAIL = 'joseph.fodera@troyweb.com'
 let PASSWORD = 'hatjej-bamhip-3redVa'
 
-const ERROR_TIMEOUT = 10000
+
 
 const { chromium } = require('playwright');
+const readline = require('readline');
 
 /*Random Entry Variable Generation*/
 
@@ -51,7 +51,7 @@ const PermitType = {
   TEMP : 'Temporary',
 }
 var permitType = PermitType.NON;
-
+const ERROR_TIMEOUT = 10000 // how long in miliseconds to get stack trace if element cannot be found 
 var randID = Math.floor(Math.random() * 1001);
 
 //defining credit cart vars
@@ -64,6 +64,69 @@ if(today.getMonth() + 1 < 10){
   ccExpirMonth = (today.getMonth() + 1).toString();
 }
 
+
+
+async function makePayment(page1, curFormURL){
+
+  // console.log('Current URL:', currentUrl);
+  //delimits at arguments so can just go to ID 
+
+  let firstHalf = curFormUrl.split('&');
+  // console.log(firstHalf); 
+  await page1.goto(firstHalf[0]); 
+  await page1.waitForLoadState();
+
+
+  //click get payment
+  await page1.getByRole('button', { name: 'Payment' }).click();
+  await page1.waitForTimeout(2000) // wait to load 
+
+  
+
+  await page1.getByRole('button', { name: 'Pay by Credit Card' }).click();
+  await page1.getByRole('button', { name: 'Confirm', exact: true }).click();
+
+
+  await page1.waitForLoadState();
+
+  await page1.getByLabel('Payment Type *').selectOption('CC');
+  await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.waitForTimeout(700);
+  await page1.getByRole('textbox', { name: 'First Name *' }).fill('Name');
+  await page1.getByRole('textbox', { name: 'Last Name *' }).fill('LastName');
+  await page1.getByRole('textbox', { name: 'Address *' }).fill('135 Mohawk St, Cohoes, NY 12047');
+  await page1.getByRole('textbox', { name: 'City *' }).fill('Cohoes');
+  await page1.getByLabel('State *').selectOption('NY');
+  await page1.getByRole('textbox', { name: 'ZIP/Postal Code *' }).fill('12047');
+  await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.waitForTimeout(700);
+
+  await page1.getByRole('textbox', { name: 'Credit Card Number *' }).fill('4111111111111111');
+
+  //must be later than the current date 
+  await page1.getByLabel('Expiration Month *').selectOption(ccExpirMonth);
+  await page1.getByLabel('Expiration Year *').selectOption(ccExpirYear);
+  await page1.getByRole('textbox', { name: 'Security Code *' }).fill('921');
+  await page1.getByRole('textbox', { name: 'Name on Credit Card *' }).fill('John Smith');
+  //edited to allow for payment validation
+  page1.setDefaultTimeout(40000); 
+  await page1.getByRole('button', { name: 'Next' }).click();
+  await page1.getByRole('button', { name: 'Submit Payment' }).click();
+  await page1.getByRole('button', { name: 'OK' }).click();
+}
+
+//allows for asking questions using readline: 
+function askQuestion(query) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  return new Promise(resolve => rl.question(query, ans => {
+    rl.close();
+    resolve(ans);
+  }));
+}
 
 
 (async () => {
@@ -82,7 +145,7 @@ if(today.getMonth() + 1 < 10){
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  //form information
+  //login
   
   await page.goto('https://okies-test.occ.ok.gov/');
   await page.getByRole('button', { name: ' External User Access For' }).click();
@@ -94,13 +157,17 @@ if(today.getMonth() + 1 < 10){
   
   //ensures new page is open 
   const page1Promise = page.waitForEvent('popup');
-  console.log('Automation Pause');
-  console.log('You must select your Organization on your own, automation will continue from there');
+  console.log('Automation Paused');
+  console.log('You must select your Organization on your own, automation will continue from there!');
   // await page.evaluate(() => {
   //   alert("You must select your Organization on your own, automation will continue from there");
   // });
 
   await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
+  console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
+  
+
+  //form information
   //ensures new page/tab is open
   const page1 = await page1Promise;
   await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
@@ -117,12 +184,13 @@ if(today.getMonth() + 1 < 10){
   await page1.getByRole('option', { name: permitType, exact: true  }).click();
   await page1.getByRole('button', { name: 'Save & Continue' }).click();
   await page1.getByRole('button', { name: 'Confirm' }).click();
+  console.log('1. Form Information Populate!');
 
 
   //Operator Info
   await page1.waitForTimeout(1000); //wait for 1 second
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
-
+  console.log('2. Operator Info Populated!');
 
 
   //Well Information
@@ -162,6 +230,8 @@ if(today.getMonth() + 1 < 10){
   await page1.locator('#PropertyBoundaryDistanceContainer').getByRole('spinbutton').click();
   await page1.getByTestId('wl-property-distance').fill('123');
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
+  console.log('3. Well Information Populated!');
+
 
   //Geologic Info
   await page1.waitForTimeout(1000); //wait for 1 second
@@ -173,6 +243,7 @@ if(today.getMonth() + 1 < 10){
   await page1.getByText('1ST BROMIDE - 202BRMD1').first().click();
   await page1.getByRole('button', { name: 'Save' }).nth(1).click();
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
+  console.log('4. Geologic Info Populated!');
 
   //Order Notations
   await page1.waitForTimeout(1000); //wait for 1 second
@@ -181,6 +252,7 @@ if(today.getMonth() + 1 < 10){
   await page1.locator('#DoesApplicantDifferContainer').getByRole('button', { name: 'select' }).click();
   await page1.getByRole('option', { name: 'No', exact: true }).click();
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
+  console.log('5. Order Notations Populated!');
 
   //Pits + Features and Cement + Document Upload
   await page1.waitForTimeout(1000); //wait for 1 second
@@ -189,6 +261,9 @@ if(today.getMonth() + 1 < 10){
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
   await page1.waitForTimeout(1000); //wait for 1 second
   await page1.getByRole('button', { name: 'Next', exact: true }).click();
+  console.log('6. Pits Populated!');
+  console.log('7. Features and Cement skipped (not neccesarry for minimum)!');
+  console.log('8. Document Upload (not neccesarry for minimum)!');
 
 
   //Operator Assertions
@@ -197,55 +272,39 @@ if(today.getMonth() + 1 < 10){
     await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
   }
   await page1.getByRole('button', { name: 'Next' }).click();
+  console.log('9. Operator Assertions Populated!');
 
 
   
-
+  //Make Payment
   //make month and year >= current Month/year   
+  const currentUrl = page1.url();
+  console.log("\n\n\nForms 1->9 have been Successfully filled with minimum requirements!!");
+  console.log("Automation Paused");
+  console.log("Take your time to make any edits to any of the sections");
+  
+  let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
+  while (input.toLowerCase() !== 'p'){
+    input = await askQuestion("Did not recognize that command, try again!\n");
+  }
 
-    await page.goto('https://okies-test.occ.ok.gov/General/Home/Landing');
-  await page1.getByRole('button', { name: 'Pay by Credit Card' }).click();
-  await page1.getByRole('button', { name: 'Confirm', exact: true }).click();
-  // goes to next page 
+  console.log('Automation Resumed...');
+
+  await makePayment(page1, currentUrl); 
+  console.log('10. Payment made!');
 
 
-  await page1.waitForLoadState();
-
-  await page1.getByLabel('Payment Type *').selectOption('CC');
-  await page1.getByRole('button', { name: 'Next' }).click();
-  await page1.waitForTimeout(700);
-  await page1.getByRole('textbox', { name: 'First Name *' }).fill('Name');
-  await page1.getByRole('textbox', { name: 'Last Name *' }).fill('LastName');
-  await page1.getByRole('textbox', { name: 'Address *' }).fill('135 Mohawk St, Cohoes, NY 12047');
-  await page1.getByRole('textbox', { name: 'City *' }).fill('Cohoes');
-  await page1.getByLabel('State *').selectOption('NY');
-  await page1.getByRole('textbox', { name: 'ZIP/Postal Code *' }).fill('12047');
-  await page1.getByRole('button', { name: 'Next' }).click();
-  await page1.waitForTimeout(700);
-
-  await page1.getByRole('textbox', { name: 'Credit Card Number *' }).fill('4111111111111111');
-
-  //must be later than the current date 
-  await page1.getByLabel('Expiration Month *').selectOption(ccExpirMonth);
-  await page1.getByLabel('Expiration Year *').selectOption(ccExpirYear);
-  await page1.getByRole('textbox', { name: 'Security Code *' }).fill('921');
-  await page1.getByRole('textbox', { name: 'Name on Credit Card *' }).fill('John Smith');
-  //edited to allow for payment validation
-  page1.setDefaultTimeout(40000); 
-  await page1.getByRole('button', { name: 'Next' }).click();
-  await page1.getByRole('button', { name: 'Submit Payment' }).click();
-  await page1.getByRole('button', { name: 'OK' }).click();
-  await page1.pause(); 
-  await page1.getByRole('button', { name: 'Form Submit' }).click();
   
   // Form Submit
+  await page1.getByRole('button', { name: 'Form Submit' }).click();
+  
   await page1.waitForTimeout(1000); //wait for 1 second
   page1.setDefaultTimeout(ERROR_TIMEOUT);
-  // await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
-  // await page1.getByRole('button', { name: 'Submit', exact: true }).click();
-  await page1.waitForTimeout(2000); //wait for 2 second
+  await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
+  await page1.getByRole('button', { name: 'Submit', exact: true }).click();
+  await page1.waitForTimeout(2000); //wait for 2 seconds
   // await page.locator('#idNext').click();
 
-  console.log('Bear Minimum of form failed out ')
+  console.log('Form Successfully Submitted!!')
   
 })();

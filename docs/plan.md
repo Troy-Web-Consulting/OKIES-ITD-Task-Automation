@@ -45,6 +45,24 @@
     - in docs note when something failed 
     - note that opens up a chrome instance with none of your pluggings 
     - arguments to terminal 
+    - note Control c to cancel 
+    - see if next button for payment has been implemented
+    - document form permutation this automates 
+    - ask for which other permuations would be most helpful
+    - don't touch anything on screen while it is running 
+    - disclaimer, if new edits made to site form may break
+  
+
+
+  1. Stops at payment, one command to contine
+  1. Support different form permuations 
+  2. Better debugging, know exactly where click/entry failed (just parsing the messge)
+  3. Controller view, user can type in a command 1,2,3,4 to fill out corresponding section 
+  4. Get User Data in so can do all of above + have chrome exentions 
+  5. Fit to format of plugging automation scripts 
+
+
+  - add in tells you where you went wrong functionality on 500
   - logic to say stop here when running it with an argument 
 
   - Try to get something running that works within the current instance of chrome 
