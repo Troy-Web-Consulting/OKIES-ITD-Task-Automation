@@ -353,11 +353,12 @@ function askQuestion(query) {
     console.log("\nForms 1->9 have been Successfully filled with minimum requirements!!");
     console.log("Automation Paused");
     console.log("Take your time to make any edits to any of the sections");
-    
-    let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
-    while (input.toLowerCase() !== 'p'){
-      input = await askQuestion("Did not recognize that command, try again!\n");
-    }
+
+    //don't need the question for now
+    // let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
+    // while (input.toLowerCase() !== 'p'){
+    //   input = await askQuestion("Did not recognize that command, try again!\n");
+    // }
 
     console.log('Automation Resumed...');
 
