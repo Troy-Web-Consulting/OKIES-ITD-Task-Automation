@@ -93,7 +93,7 @@
 
 
 ## Troubleshooting 
-  - if you see an error llike the one shown belowlike this go [here](docs/permissionsIssues.md#recieved-error-message-similar-to):
+  - if you see an error llike the one shown below go [here](docs/permissionsIssues.md#recieved-error-message-similar-to):
 ```
 npm : File C:\Program Files\nodejs\npm.ps1 cannot be loaded because running scripts is disabled on this
 system. For more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
