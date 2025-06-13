@@ -3,6 +3,7 @@
   - Setup Demo Video Link 
   - Using It Demo 
   - Using It Demo (if you want to use VScode integrated terminal)
+
   
 
 ## Setup (Only Once) 
@@ -54,6 +55,20 @@
 
   - running these commands will initiate the script!
   -  While it is running do not click around in the browser unless instructed and keep your terminal open as you will get updates on the scripts progress!!
+
+
+## Troubleshooting 
+  - if you see an error llike the one shown belowlike this go [here](docs/permissionsIssues.md#recieved-error-message-similar-to):
+```
+npm : File C:\Program Files\nodejs\npm.ps1 cannot be loaded because running scripts is disabled on this
+system. For more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
+```
+
+  - if the script starts running but the browser doesn't open, follow [these general permissions instructions](docs/permissionsIssues.md)
+  - if none of that works or you need sudo functionality, slack me and I can make that work. 
+  
+
 ## How to Use:
   #### The general flow of the script is as follows: 
   - it will log you in to OKIES
@@ -84,6 +99,8 @@
 ## IMPORTANT things to note:
   - This Script currently only automates IDT forms of [this permutation](docs/curPer.png). Let me know of any otherones that would be helpful to test
   - you can run multiple at a time by just starting a new terminal tab and following instruction #1
+    - [here is a cool bash script that runs uat/test every 30 minutes automatically](bash/onTimer.sh) 
+      - requires changing cd command to run; also may only work on mac
   - Currently, the chrome instance this script opens will not have any chrome extensions; potential future addition 
   - As you know, test and uat are living environment, if something changes in the ITD form between deployments, the script may operate incorrectly. 
     - Just reach out and I'll be very responsive in fixing it!
@@ -92,17 +109,6 @@
 
 
 
-## Troubleshooting 
-  - if you see an error llike the one shown belowlike this go [here](docs/permissionsIssues.md#recieved-error-message-similar-to):
-```
-npm : File C:\Program Files\nodejs\npm.ps1 cannot be loaded because running scripts is disabled on this
-system. For more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
-At line:1 char:1
-```
-
-  - if the script starts running but the browser doesn't open, follow [these general permissions instructions](docs/permissionsIssues.md)
-  - if none of that works or you need sudo functionality, slack me and I can make that work. 
-  
 
 
 
