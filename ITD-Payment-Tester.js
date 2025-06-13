@@ -60,6 +60,8 @@ var randID = Math.floor(Math.random() * 1001);
 //defining credit cart vars
 const today = new Date(); 
 const ccExpirYear = (today.getFullYear() + 1).toString()
+has500 = false; 
+let currentSegment = ''; 
 let ccExpirMonth = ''
 if(today.getMonth() + 1 < 10){
   ccExpirMonth = '0' + (today.getMonth() + 1).toString();
@@ -177,6 +179,17 @@ function askQuestion(query) {
   const context = await browser.newContext({  viewport: null});
   const page = await context.newPage();
 
+  page.on('response', (response) => {
+    if (response.status() === 500) {
+      has500 = true;
+      console.log("------------------------------------------------------------------------------------------");
+      console.log('*********************500 Error Occured*********************');
+      console.log('*Wait 10 Seconds for rest of the error to populate*'); //neccessary so that doesn't jump the gun on loading times 
+      console.log('Error Url: ' + response.url());
+      console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));
+    }
+  });
+
   //Entire thing in Try-Catch block so that browser will stay open
   try{
     //login
@@ -203,7 +216,19 @@ function askQuestion(query) {
 
     //form information
     //ensures new page/tab is open
+    currentSegment = '1. Form Information'
     const page1 = await page1Promise;
+    //flow work as once this is recognized, timeout will occur and then will go to the catch block
+    page1.on('response', (response) => {
+      if (response.status() === 500) {
+        has500 = true;
+        console.log("------------------------------------------------------------------------------------------");
+        console.log('*********************500 Error Occured*********************');
+        console.log('*Wait 10 Seconds for rest of the error to populate*'); //neccessary so that doesn't jump the gun on loading times 
+        console.log('Error Url: ' + response.url());
+        console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));
+      }
+    });
     await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
     page1.setDefaultTimeout(ERROR_TIMEOUT);
     //Set Hole Type as specificied above
@@ -222,6 +247,7 @@ function askQuestion(query) {
 
 
     //Operator Info
+    currentSegment = '2. Operator Info'
     page1.setDefaultTimeout(30000);
     await page1.waitForLoadState();
     page1.setDefaultTimeout(ERROR_TIMEOUT);
@@ -230,6 +256,7 @@ function askQuestion(query) {
 
 
     //Well Information
+    currentSegment = '3. Well Information'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByTestId('wi-well-name').click();
     await page1.getByTestId('wi-well-name').fill(wellType + ' ' + holeType + ' ' + permitType + ' ' + randID);
@@ -270,6 +297,7 @@ function askQuestion(query) {
 
 
     //Geologic Info
+    currentSegment = '4. Geologic Info'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Actions' }).click();
     await page1.getByRole('link', { name: 'Add Zone' }).click();
@@ -282,6 +310,7 @@ function askQuestion(query) {
     console.log('4. Geologic Info Populated!');
 
     //Order Notations
+    currentSegment = '5. Order Notations'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.locator('#NoticeGivenContainer').getByRole('button', { name: 'select' }).click();
     await page1.getByRole('option', { name: 'Yes' }).click();
@@ -291,10 +320,13 @@ function askQuestion(query) {
     console.log('5. Order Notations Populated!');
 
     //Pits + Features and Cement + Document Upload
+    currentSegment = '6. Pits'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    currentSegment = '7. Features and Cement'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    currentSegment = '8. Document Upload'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
     console.log('6. Pits Populated!');
@@ -303,6 +335,7 @@ function askQuestion(query) {
 
 
     //Operator Assertions
+    currentSegment = '9. Operator Assertions'
     await page1.waitForTimeout(1000); //wait for 1 second
     for(let i = 0; i < OPERATOR_ASSERTION_CHECKS; i++){
       await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
@@ -314,6 +347,7 @@ function askQuestion(query) {
     
     //Make Payment
     //make month and year >= current Month/year   
+    currentSegment = '10. Make Payment'
     const currentUrl = page1.url();
     console.log("------------------------------------------------------------------------------------------");
     console.log("\nForms 1->9 have been Successfully filled with minimum requirements!!");
@@ -333,6 +367,7 @@ function askQuestion(query) {
 
     
     // Form Submit
+    currentSegment = '11. Form Submit'
     await page1.getByRole('button', { name: 'Form Submit' }).click();
     
     await page1.waitForTimeout(1000); //wait for 1 second
@@ -344,9 +379,22 @@ function askQuestion(query) {
     console.log('\nForm Successfully Submitted!!')
     console.log('Hit Ctrl+C to terminate the Script and close the window (so you can run again!)')
   }catch (error){
-    console.log("------------------------------------------------------------------------------------------");
-    console.error('\nError occurred:', error);
-    console.log('Browser will stay open for debugging.\nHit Control+C to Terminate current script and try again');
+    if(has500){
+      console.error('\nError occurred:', error);
+      console.log("Error Occured on section:  " + currentSegment)
+      if (error.stack){
+        const stackLines = error.stack.split('\n');
+        const relevantLine = stackLines[1]; //last thing callsed 
+        console.log("Last Button/Click attempt: " + relevantLine)
+      }
+
+    //store the last completed segment and output it 
+    //PLaywright line it error at
+    }else{
+      console.log("------------------------------------------------------------------------------------------");
+      console.error('\nError occurred:', error);
+      console.log('Browser will stay open for debugging.\nHit Control+C to Terminate current script and try again');  
+    }
   }
   
 })();

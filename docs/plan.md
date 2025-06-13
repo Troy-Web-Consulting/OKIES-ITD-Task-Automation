@@ -28,6 +28,7 @@
   - recorder lays a good base, but be cautious about it ad ID may be difficult 
   - && in terminal allows you to run multiple commands
   - exec bash -> leaves shell open after running 
+  - everytime a new website is travled to, response is logged, can check if that is 500 before timeout and go 
 
 
 ## Storing login 
