@@ -16,7 +16,7 @@ INSTRUCTIONS
 let EMAIL = '' //email you want to log into okies with
 let PASSWORD = '' //password you want to log into okies with 
 let ENVIRONMENT_SEL = '' // valid ones are 'test' and 'uat' 
-
+const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC'; 
 
 
 const { chromium } = require('playwright');
@@ -61,6 +61,7 @@ var randID = Math.floor(Math.random() * 1001);
 const today = new Date(); 
 const ccExpirYear = (today.getFullYear() + 1).toString()
 has500 = false; 
+alrPrint500 = false; 
 let currentSegment = ''; 
 let ccExpirMonth = ''
 if(today.getMonth() + 1 < 10){
@@ -118,9 +119,9 @@ async function makePayment(page1, curFormURL){
   await page1.getByRole('textbox', { name: 'Name on Credit Card *' }).fill('John Smith');
   //edited to allow for payment validation
   page1.setDefaultTimeout(40000); 
-  await page1.getByRole('button', { name: 'Next' }).click();
-  await page1.getByRole('button', { name: 'Submit Payment' }).click();
-  await page1.getByRole('button', { name: 'OK' }).click();
+  // await page1.getByRole('button', { name: 'Next' }).click();
+  // await page1.getByRole('button', { name: 'Submit Payment' }).click();
+  // await page1.getByRole('button', { name: 'OK' }).click();
 }
 
 //allows for asking questions using readline: 
@@ -151,6 +152,7 @@ function askQuestion(query) {
     ENVIRONMENT_SEL = process.argv[4];  
   }
 
+  const counter = process.argv[5]
   ENVIRONMENT_SEL = ENVIRONMENT_SEL.toLowerCase(); 
 
   //checking URL is right and making uat/test changes 
@@ -164,7 +166,7 @@ function askQuestion(query) {
   }
   
 
-  console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
+  // console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
 
   const browser = await chromium.launch({
     channel: 'chrome',
@@ -179,13 +181,16 @@ function askQuestion(query) {
   const context = await browser.newContext({  viewport: null});
   const page = await context.newPage();
 
+  console.log("Starting ITD 500 Checker Process with ID: " + counter); 
+
   page.on('response', (response) => {
     if (response.status() === 500) {
       has500 = true;
-      console.log("------------------------------------------------------------------------------------------");
-      console.log('*********************500 Error Occured*********************');
-      console.log('*Wait 10 Seconds for rest of the error to populate*'); //neccessary so that doesn't jump the gun on loading times 
-      console.log('Error Url: ' + response.url());
+      alrPrint500 = true;
+      page.setDefaultTimeout(ERROR_TIMEOUT);
+      console.log('\n*********************ITD Process ID #' + counter+ ' 500 Error Occured*********************');
+      
+      console.log('\nError Url: ' + page.url());
       console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));
     }
   });
@@ -200,18 +205,24 @@ function askQuestion(query) {
     await page.getByRole('textbox', { name: 'Password' }).click();
     await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
+    // if(ENVIRONMENT_SEL =='test'){
+    //   await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
+    //   await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
+    //   await page.getByRole('button', { name: 'Continue' }).click();
+    // }
+    
     
     //ensures new page is open 
     page.setDefaultTimeout(180000); //have 2 minutes to select 
     const page1Promise = page.waitForEvent('popup');
-    console.log('\nAutomation Paused');
-    console.log('You must select your Organization on your own, automation will continue from there!');
+    // console.log('\nAutomation Paused');
+    // console.log('You must select your Organization on your own, automation will continue from there!');
     // await page.evaluate(() => {
     //   alert("You must select your Organization on your own, automation will continue from there");
     // });
 
     await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
-    console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
+    // console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
     
 
     //form information
@@ -222,11 +233,13 @@ function askQuestion(query) {
     page1.on('response', (response) => {
       if (response.status() === 500) {
         has500 = true;
-        console.log("------------------------------------------------------------------------------------------");
-        console.log('*********************500 Error Occured*********************');
-        console.log('*Wait 10 Seconds for rest of the error to populate*'); //neccessary so that doesn't jump the gun on loading times 
-        console.log('Error Url: ' + response.url());
-        console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));
+        if (!alrPrint500){
+          page1.setDefaultTimeout(ERROR_TIMEOUT);
+          console.log('\n*********************500 Error Occured*********************');
+          console.log('Error Url: ' + page1.url());
+          console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));          
+        }
+
       }
     });
     await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
@@ -243,7 +256,7 @@ function askQuestion(query) {
     await page1.getByRole('option', { name: permitType, exact: true  }).click();
     await page1.getByRole('button', { name: 'Save & Continue' }).click();
     await page1.getByRole('button', { name: 'Confirm' }).click();
-    console.log('1. Form Information Populate!');
+    // console.log('1. Form Information Populate!');
 
 
     //Operator Info
@@ -252,7 +265,7 @@ function askQuestion(query) {
     await page1.waitForLoadState();
     page1.setDefaultTimeout(ERROR_TIMEOUT);
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('2. Operator Info Populated!');
+    // console.log('2. Operator Info Populated!');
 
 
     //Well Information
@@ -293,7 +306,8 @@ function askQuestion(query) {
     await page1.locator('#PropertyBoundaryDistanceContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wl-property-distance').fill('123');
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('3. Well Information Populated!');
+    // console.log('3. Well Information Populated!');
+
 
 
     //Geologic Info
@@ -307,7 +321,7 @@ function askQuestion(query) {
     await page1.getByText('1ST BROMIDE - 202BRMD1').first().click();
     await page1.getByRole('button', { name: 'Save' }).nth(1).click();
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('4. Geologic Info Populated!');
+    // console.log('4. Geologic Info Populated!');
 
     //Order Notations
     currentSegment = '5. Order Notations'
@@ -317,7 +331,7 @@ function askQuestion(query) {
     await page1.locator('#DoesApplicantDifferContainer').getByRole('button', { name: 'select' }).click();
     await page1.getByRole('option', { name: 'No', exact: true }).click();
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('5. Order Notations Populated!');
+    // console.log('5. Order Notations Populated!');
 
     //Pits + Features and Cement + Document Upload
     currentSegment = '6. Pits'
@@ -329,9 +343,9 @@ function askQuestion(query) {
     currentSegment = '8. Document Upload'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('6. Pits Populated!');
-    console.log('7. Features and Cement skipped (not neccesarry for minimum)!');
-    console.log('8. Document Upload (not neccesarry for minimum)!');
+    // console.log('6. Pits Populated!');
+    // console.log('7. Features and Cement skipped (not neccesarry for minimum)!');
+    // console.log('8. Document Upload (not neccesarry for minimum)!');
 
 
     //Operator Assertions
@@ -341,7 +355,7 @@ function askQuestion(query) {
       await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
     }
     await page1.getByRole('button', { name: 'Next' }).click();
-    console.log('9. Operator Assertions Populated!');
+    // console.log('9. Operator Assertions Populated!');
 
 
     
@@ -349,10 +363,10 @@ function askQuestion(query) {
     //make month and year >= current Month/year   
     currentSegment = '10. Make Payment'
     const currentUrl = page1.url();
-    console.log("------------------------------------------------------------------------------------------");
-    console.log("\nForms 1->9 have been Successfully filled with minimum requirements!!");
-    console.log("Automation Paused");
-    console.log("Take your time to make any edits to any of the sections");
+    // console.log("------------------------------------------------------------------------------------------");
+    // console.log("\nForms 1->9 have been Successfully filled with minimum requirements!!");
+    // console.log("Automation Paused");
+    // console.log("Take your time to make any edits to any of the sections");
 
     //don't need the question for now
     // let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
@@ -360,41 +374,44 @@ function askQuestion(query) {
     //   input = await askQuestion("Did not recognize that command, try again!\n");
     // }
 
-    console.log('Automation Resumed...');
+    // console.log('Automation Resumed...');
 
     await makePayment(page1, currentUrl); 
-    console.log('10. Payment made!');
+    // console.log('10. Payment made!');
 
 
     
-    // Form Submit
-    currentSegment = '11. Form Submit'
-    await page1.getByRole('button', { name: 'Form Submit' }).click();
+    // // Form Submit
+    // currentSegment = '11. Form Submit'
+    // await page1.getByRole('button', { name: 'Form Submit' }).click();
     
-    await page1.waitForTimeout(1000); //wait for 1 second
-    page1.setDefaultTimeout(ERROR_TIMEOUT);
-    await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
-    await page1.getByRole('button', { name: 'Submit', exact: true }).click();
-    await page1.waitForTimeout(2000); //wait for 2 seconds
+    // await page1.waitForTimeout(1000); //wait for 1 second
+    // page1.setDefaultTimeout(ERROR_TIMEOUT);
+    // await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
+    // await page1.getByRole('button', { name: 'Submit', exact: true }).click();
+    // await page1.waitForTimeout(2000); //wait for 2 seconds
+    console.log('\nITD Process ID #' + counter+ ' is done, No 500 Errors Detected!!')
     console.log("------------------------------------------------------------------------------------------");
-    console.log('\nForm Successfully Submitted!!')
-    console.log('Hit Ctrl+C to terminate the Script and close the window (so you can run again!)')
+    browser.close()
+    // console.log('Hit Ctrl+C to terminate the Script and close the window (so you can run again!)')
   }catch (error){
     if(has500){
-      console.error('\nError occurred:', error);
+      //note, only 500s will stay open for debugging
+      
       console.log("Error Occured on section:  " + currentSegment)
       if (error.stack){
         const stackLines = error.stack.split('\n');
-        const relevantLine = stackLines[1]; //last thing callsed 
-        console.log("Last Button/Click attempt: " + relevantLine)
+        const relevantLine = stackLines[2]; //last thing callsed 
+        console.log("Current Button/Click attempt: " + relevantLine)
       }
+      console.error('\nEntire Playwright Stack Trace:\n', error);
+      console.log("------------------------------------------------------------------------------------------");
 
     //store the last completed segment and output it 
     //PLaywright line it error at
     }else{
+      console.error('\nITD Process ID #' + counter+ ' Non-500 Error occurred:', error);
       console.log("------------------------------------------------------------------------------------------");
-      console.error('\nError occurred:', error);
-      console.log('Browser will stay open for debugging.\nHit Control+C to Terminate current script and try again');  
     }
   }
   
