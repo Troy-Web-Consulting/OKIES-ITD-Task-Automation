@@ -26,6 +26,8 @@
   - role based finding is much easier than tabbing 
   - will auto scroll when searching for elements by their CSS 
   - recorder lays a good base, but be cautious about it ad ID may be difficult 
+  - && in terminal allows you to run multiple commands
+  - exec bash -> leaves shell open after running 
 
 
 ## Storing login 
