@@ -10,7 +10,7 @@ COMMAND3="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs
 
 while true; do
 
-  osascript -e "tell application \"Terminal\" to do script \"${COMMAND3}\""
+  osascript -e "tell application \"Terminal\" to do script \"${COMMAND1}\""
   # Run this command in a different terminal instance: 
   osascript -e "tell application \"Terminal\" to do script \"${COMMAND3}\""
 
@@ -19,7 +19,12 @@ while true; do
 
   
 
+  echo "Waiting for 30 minutes..."
 
-  # Wait for 30 minutes (1800 seconds)
-  sleep 1800
+  for ((i=1800; i>0; i--)); do
+    echo "$i"
+    sleep 1
+  done
+
+  echo "Initiating new Instances..."
 done
