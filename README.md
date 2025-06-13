@@ -93,6 +93,13 @@
 
 
 ## Troubleshooting 
+  - if you see an error llike the one shown belowlike this go [here](docs/permissionsIssues.md#recieved-error-message-similar-to):
+```
+npm : File C:\Program Files\nodejs\npm.ps1 cannot be loaded because running scripts is disabled on this
+system. For more information, see about_Execution_Policies at https:/go.microsoft.com/fwlink/?LinkID=135170.
+At line:1 char:1
+```
+
   - if the script starts running but the browser doesn't open, follow [these general permissions instructions](docs/permissionsIssues.md)
   - if none of that works or you need sudo functionality, slack me and I can make that work. 
   
