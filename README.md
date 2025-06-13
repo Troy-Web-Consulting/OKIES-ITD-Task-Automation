@@ -7,22 +7,31 @@
 
 ## Setup (Only Once) 
 
-- note: you may be prompted to install git, that once be neccessarry
+- note: also you may be prompted to install git, that will not be be neccessarry
 
 #### 1. Pull the github repo
 
 #### 2. Open Terminal/Powershell and navigate to root directory of this github:
  - ```cd .../OKIES-Payment-Automation```
 
-#### 3. Initialize Node Project (copy and paste these command into the terminal)
+#### 2. Check if you have node.js installed:
+ - running this: ```node -v```
+   - If it returns any kind of version it's installed (the specific numbers don't really matter), for example: ```v22.16.0```
+ - ```npm -v```
+   - If it returns any kind of version it's installed (the specific numbers don't really matter), for example: ```10.9.2```
+
+- If you get something like this for either of these commands: ```command not found: node```; follow [these very quick instructions to install](docs/installingNode.md)
+
+#### 4. Initialize Node Project (copy and paste these command into the terminal)
   - ```npm init -y```
 
-#### 4. Install npm 
+
+#### 5. Install npm 
   - ```npm install```
 
-#### 5. Install Playwright dependencies 
+#### 6. Install Playwright dependencies 
   - ```npm install playwright```  
-#### 6. Install Playwright 
+#### 7. Install Playwright 
   - ```npx playwright install```
 
 ## How to Run: 
@@ -37,7 +46,6 @@
    - **'testing-environment'** - can either be 'uat' or 'test'
      - this determines what environment the script will run on 
 
-    
 
   - some example commands 
     - ```node ITD-Payment-Tester joseph.fodera@troyweb.com myPassword uat```
