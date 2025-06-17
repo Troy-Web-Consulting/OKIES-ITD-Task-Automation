@@ -28,7 +28,7 @@ while true; do
   echo "COUNTER=$COUNTER" > "$STATE_FILE"
 
   COMMAND1="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs/OKIES-Payment-Automation && node ITD-Payment-Tester joseph.fodera@troyweb.com hatjej-bamhip-3redVa test ${COUNTER} >> testLog.txt 2>&1; exec bash"
-  COMMAND3="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs/OKIES-Payment-Automation && node ITD-Payment-Tester joseph.fodera@troyweb.com hatjej-bamhip-3redVa uat ${COUNTER} >> uatLog.txt 2>&1; exec bash"
+  COMMAND3="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs/OKIES-Payment-Automation && node ITD-Payment-Tester joseph.fodera@troyweb.com hatjej-bamhip-3redVa uat ${COUNTER}  >> uatLog.txt 2>&1; exec bash"
 
   osascript -e '
   tell application "Terminal"

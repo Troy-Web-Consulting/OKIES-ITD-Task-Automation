@@ -8,7 +8,6 @@ you can make any edits neccessary, then if you prompt it with 'p' will finish up
 INSTRUCTIONS
 - follow instructions in root directory 
 - set the Email and password and your good to go
-
 */
 
 /* VARS TO SET*/
@@ -16,7 +15,10 @@ INSTRUCTIONS
 let EMAIL = '' //email you want to log into okies with
 let PASSWORD = '' //password you want to log into okies with 
 let ENVIRONMENT_SEL = '' // valid ones are 'test' and 'uat' 
-const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC'; 
+let ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';  //if you are in multiple organizations, put the name of the one you want to log into here and it will get you through, need quotes 
+//allows for you to make the same calls every time 
+let orgWhere = 'test' //NOT REQUIRED can be test, uat, or both; describes on what environments you are in multiple orgs, if not given one, will default to doing it 
+
 
 
 const { chromium } = require('playwright');
@@ -153,6 +155,17 @@ function askQuestion(query) {
   }
 
   const counter = process.argv[5]
+
+  if(ORGANIZATION_NAME == ''){
+    ORGANIZATION_NAME = process.argv[6];  
+  }
+
+  if(orgWhere == ''){
+    orgWhere = process.argv[7];  
+  }
+  console.log(orgWhere)
+
+  
   ENVIRONMENT_SEL = ENVIRONMENT_SEL.toLowerCase(); 
 
   //checking URL is right and making uat/test changes 
@@ -205,11 +218,14 @@ function askQuestion(query) {
     await page.getByRole('textbox', { name: 'Password' }).click();
     await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
-    // if(ENVIRONMENT_SEL =='test'){
-    //   await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
-    //   await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
-    //   await page.getByRole('button', { name: 'Continue' }).click();
-    // }
+
+    if((orgWhere === undefined ||orgWhere == ENVIRONMENT_SEL || orgWhere.toLowerCase()  == 'both')  && ORGANIZATION_NAME != ''){
+      //select the organization 
+      await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
+      await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
+      await page.getByRole('button', { name: 'Continue' }).click();
+    }
+
     
     
     //ensures new page is open 
@@ -370,7 +386,7 @@ function askQuestion(query) {
 
     //don't need the question for now
     // let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
-    // while (input.toLowerCase() !== 'p'){
+    // while (const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';  //if you are in multi !== 'p'){
     //   input = await askQuestion("Did not recognize that command, try again!\n");
     // }
 
