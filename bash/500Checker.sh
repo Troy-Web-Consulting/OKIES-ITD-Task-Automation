@@ -54,7 +54,7 @@ while true; do
 
   echo "Waiting for 20 seconds"
 
-  for ((i=60; i>0; i--)); do
+  for ((i=40; i>0; i--)); do
     echo "$i"
     sleep 1
   done

@@ -391,6 +391,7 @@ function askQuestion(query) {
     // await page1.getByRole('button', { name: 'Submit', exact: true }).click();
     // await page1.waitForTimeout(2000); //wait for 2 seconds
     console.log('\nITD Process ID #' + counter+ ' is done, No 500 Errors Detected!!')
+    console.log('Process Finished: ' +  new Date().toLocaleString('en-US', {hour12: false}));  
     console.log("------------------------------------------------------------------------------------------");
     browser.close()
     // console.log('Hit Ctrl+C to terminate the Script and close the window (so you can run again!)')
@@ -411,6 +412,7 @@ function askQuestion(query) {
     //PLaywright line it error at
     }else{
       console.error('\nITD Process ID #' + counter+ ' Non-500 Error occurred:', error);
+      console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));          
       console.log("------------------------------------------------------------------------------------------");
     }
   }
