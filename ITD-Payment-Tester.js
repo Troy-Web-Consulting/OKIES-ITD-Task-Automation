@@ -16,6 +16,7 @@ INSTRUCTIONS
 let EMAIL = '' //email you want to log into okies with
 let PASSWORD = '' //password you want to log into okies with 
 let ENVIRONMENT_SEL = '' // valid ones are 'test' and 'uat' 
+let ORGANIZATION_NAME = '';  //if you are in multiple organizations, put the name of the one you want to log into here and it will get you through, need quotes, if senses you are on correct page, logs you into org specified 
 
 
 
@@ -160,6 +161,11 @@ function askQuestion(query) {
     console.log("'https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/' is not supported, change your Environment selection. " );
     process.exit(0);
   }
+
+  if(ORGANIZATION_NAME == ''){
+    ORGANIZATION_NAME = process.argv[5];  
+  }
+
   
 
   console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
@@ -189,21 +195,27 @@ function askQuestion(query) {
     await page.getByRole('button', { name: 'Sign in' }).click();
     
     //ensures new page is open 
-    page.setDefaultTimeout(180000); //have 2 minutes to select 
+    
+    
     const page1Promise = page.waitForEvent('popup');
-    console.log('\nAutomation Paused');
-    console.log('You must select your Organization on your own, automation will continue from there!');
-    // await page.evaluate(() => {
-    //   alert("You must select your Organization on your own, automation will continue from there");
-    // });
+    
+    await page.waitForTimeout(4000); 
+    
+    // if in organization, will get you in
+    if(page.url() == "https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/General/Account/ExternalLoginCallback" && ORGANIZATION_NAME != ''){
+      //select the organization 
+      await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
+      await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
+      await page.getByRole('button', { name: 'Continue' }).click();
+    }
 
-    await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
-    console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
     
 
     //form information
     //ensures new page/tab is open
-    const page1 = await page1Promise;
+
+    await page.getByRole('link', { name: 'Notice of Intent To Drill' }).click();
+    const page1 = await page1Promise; 
     await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
     page1.setDefaultTimeout(ERROR_TIMEOUT);
     //Set Hole Type as specificied above
