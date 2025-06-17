@@ -256,7 +256,11 @@ function askQuestion(query) {
     await page1.locator('#MeridianContainer').getByRole('button', { name: 'select' }).click();
     await page1.getByRole('option', { name: 'CM' }).click();
     await page1.locator('#CountyContainer').getByRole('button', { name: 'select' }).click();
-    await page1.getByRole('option', { name: 'Choctaw' }).click();
+    if(ENVIRONMENT_SEL == 'test'){
+      await page1.getByRole('option', { name: 'Cimarron' }).click();  
+    }else{
+      await page1.getByRole('option', { name: 'Choctaw' }).click();
+    }
     await page1.locator('#NorthSouthOffsetContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wi-north-south-offset').fill('123');
     await page1.locator('#NorthSouthContainer').getByRole('button', { name: 'select' }).click();
