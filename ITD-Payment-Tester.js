@@ -163,7 +163,7 @@ function askQuestion(query) {
   if(orgWhere == ''){
     orgWhere = process.argv[7];  
   }
-  console.log(orgWhere)
+  
 
   
   ENVIRONMENT_SEL = ENVIRONMENT_SEL.toLowerCase(); 
@@ -237,7 +237,7 @@ function askQuestion(query) {
     //   alert("You must select your Organization on your own, automation will continue from there");
     // });
 
-    await page.getByRole('link', { name: 'Notice of Intent To Drill (' }).click();
+    await page.getByRole('link', { name: 'Notice of Intent To Drill' }).click();
     // console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
     
 
@@ -300,7 +300,7 @@ function askQuestion(query) {
     await page1.locator('#MeridianContainer').getByRole('button', { name: 'select' }).click();
     await page1.getByRole('option', { name: 'CM' }).click();
     await page1.locator('#CountyContainer').getByRole('button', { name: 'select' }).click();
-    await page1.getByRole('option', { name: 'Choctaw' }).click();
+    await page1.getByRole('option', { name: 'Cimarron' }).click();
     await page1.locator('#NorthSouthOffsetContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wi-north-south-offset').fill('123');
     await page1.locator('#NorthSouthContainer').getByRole('button', { name: 'select' }).click();

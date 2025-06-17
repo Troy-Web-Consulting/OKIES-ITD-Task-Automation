@@ -27,8 +27,8 @@ while true; do
   # Save it back to the file
   echo "COUNTER=$COUNTER" > "$STATE_FILE"
 
-  COMMAND1="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs/OKIES-Payment-Automation && node ITD-Payment-Tester joseph.fodera@troyweb.com hatjej-bamhip-3redVa test ${COUNTER} >> testLog.txt 2>&1; exec bash"
-  COMMAND3="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs/OKIES-Payment-Automation && node ITD-Payment-Tester joseph.fodera@troyweb.com hatjej-bamhip-3redVa uat ${COUNTER}  >> uatLog.txt 2>&1; exec bash"
+  COMMAND1="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs/OKIES-Payment-Automation && node ITD-Payment-Tester joseph.fodera@troyweb.com sufgen-zeJged-8vazju test ${COUNTER} >> testLog.txt 2>&1; exec bash"
+  COMMAND3="cd /Users/jfodera.3/Documents/Troy-Web-cons/Projects/others/GWPC-OKIEs/OKIES-Payment-Automation && node ITD-Payment-Tester joseph.fodera@troyweb.com sufgen-zeJged-8vazju uat ${COUNTER}  >> uatLog.txt 2>&1; exec bash"
 
   osascript -e '
   tell application "Terminal"
@@ -39,14 +39,14 @@ while true; do
   end tell
   '
 
-  osascript -e '
-  tell application "Terminal"
-    activate
-    tell application "System Events" to tell process "Terminal" to keystroke "t" using command down
-    delay 0.2
-    do script "'"${COMMAND3}"'" in selected tab of the front window
-  end tell
-  '
+  # osascript -e '
+  # tell application "Terminal"
+  #   activate
+  #   tell application "System Events" to tell process "Terminal" to keystroke "t" using command down
+  #   delay 0.2
+  #   do script "'"${COMMAND3}"'" in selected tab of the front window
+  # end tell
+  # '
 
 
 
@@ -54,7 +54,7 @@ while true; do
 
   echo "Waiting for 20 seconds"
 
-  for ((i=40; i>0; i--)); do
+  for ((i=60; i>0; i--)); do
     echo "$i"
     sleep 1
   done
