@@ -289,6 +289,7 @@ function askQuestion(query) {
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Actions' }).click();
     await page1.getByRole('link', { name: 'Add Zone' }).click();
+    await page1.waitForTimeout(700); //wait for 1 second
     await page1.getByRole('combobox', { name: 'Zone Category*' }).getByLabel('select').click();
     await page1.getByRole('option', { name: 'Target' }).click();
     await page1.getByRole('combobox', { name: 'Zone Name*' }).getByLabel('select').click();
