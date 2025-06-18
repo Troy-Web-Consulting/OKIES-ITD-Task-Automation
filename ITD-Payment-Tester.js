@@ -16,8 +16,7 @@ let EMAIL = '' //email you want to log into okies with
 let PASSWORD = '' //password you want to log into okies with 
 let ENVIRONMENT_SEL = '' // valid ones are 'test' and 'uat' 
 let ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';  //if you are in multiple organizations, put the name of the one you want to log into here and it will get you through, need quotes 
-//allows for you to make the same calls every time 
-let orgWhere = 'test' //NOT REQUIRED can be test, uat, or both; describes on what environments you are in multiple orgs, if not given one, will default to doing it 
+
 
 
 
@@ -160,10 +159,7 @@ function askQuestion(query) {
     ORGANIZATION_NAME = process.argv[6];  
   }
 
-  if(orgWhere == ''){
-    orgWhere = process.argv[7];  
-  }
-  
+
 
   
   ENVIRONMENT_SEL = ENVIRONMENT_SEL.toLowerCase(); 
@@ -177,14 +173,9 @@ function askQuestion(query) {
     console.log("'https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/' is not supported, change your Environment selection. " );
     process.exit(0);
   }
-
-  if(ORGANIZATION_NAME == ''){
-    ORGANIZATION_NAME = process.argv[5];  
-  }
-
   
 
-  // console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
+  console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
 
   const browser = await chromium.launch({
     channel: 'chrome',
@@ -223,25 +214,24 @@ function askQuestion(query) {
     await page.getByRole('textbox', { name: 'Password' }).click();
     await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
-
-    if((orgWhere === undefined ||orgWhere == ENVIRONMENT_SEL || orgWhere.toLowerCase()  == 'both')  && ORGANIZATION_NAME != ''){
-      //select the organization 
-      await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
-      await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
-      await page.getByRole('button', { name: 'Continue' }).click();
-    }
-
-    
     
     //ensures new page is open 
     
     
     const page1Promise = page.waitForEvent('popup');
-    // console.log('\nAutomation Paused');
-    // console.log('You must select your Organization on your own, automation will continue from there!');
-    // await page.evaluate(() => {
-    //   alert("You must select your Organization on your own, automation will continue from there");
-    // });
+    
+    await page.waitForTimeout(4000); 
+    
+    // if in organization, will get you in
+    console.log(ORGANIZATION_NAME)
+    if(page.url() == "https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/General/Account/ExternalLoginCallback" && ORGANIZATION_NAME != ''){
+      //select the organization 
+      
+      await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
+      await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
+      await page.getByRole('button', { name: 'Continue' }).click();
+    }
+
 
     await page.getByRole('link', { name: 'Notice of Intent To Drill' }).click();
     // console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
@@ -318,9 +308,9 @@ function askQuestion(query) {
     await page1.locator('#Quarter').click();
     await page1.locator('#Quarter').fill('1');
     await page1.locator('#LatitudeContainer').getByRole('spinbutton').click();
-    await page1.getByTestId('wl-latitude').fill('34');
+    await page1.getByTestId('wl-latitude').fill('123');
     await page1.locator('#LongitudeContainer').getByRole('spinbutton').click();
-    await page1.getByTestId('wl-longitude').fill('-96');
+    await page1.getByTestId('wl-longitude').fill('123');
     await page1.locator('#GroundElevationContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wi-ground-information').fill('123');
     await page1.locator('#BaseTreatableWaterContainer').getByRole('spinbutton').click();
