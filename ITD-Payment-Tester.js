@@ -312,9 +312,9 @@ function askQuestion(query) {
     await page1.locator('#Quarter').click();
     await page1.locator('#Quarter').fill('1');
     await page1.locator('#LatitudeContainer').getByRole('spinbutton').click();
-    await page1.getByTestId('wl-latitude').fill('123');
+    await page1.getByTestId('wl-latitude').fill('34');
     await page1.locator('#LongitudeContainer').getByRole('spinbutton').click();
-    await page1.getByTestId('wl-longitude').fill('123');
+    await page1.getByTestId('wl-longitude').fill('-96');
     await page1.locator('#GroundElevationContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wi-ground-information').fill('123');
     await page1.locator('#BaseTreatableWaterContainer').getByRole('spinbutton').click();
