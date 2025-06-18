@@ -28,7 +28,7 @@
   - recorder lays a good base, but be cautious about it ad ID may be difficult 
   - && in terminal allows you to run multiple commands
   - exec bash -> leaves shell open after running 
-  - viewport is how you view, screen size is the size of the actual content on the page
+  - everytime a new website is travled to, response is logged, can check if that is 500 before timeout and go 
 
 
 ## Storing login 
@@ -66,11 +66,7 @@
     - write the commands exactly as such, if you need sudo, reach out to me √
     - If get error: Error occurred: locator.click: Timeout 10000ms exceeded. that means a page took too long to load, so try again. If issue persists, you may have found a bug! √
     - can run multiple scripts at once√
-
-
-### Current 
-  - finish organization documentation, 
-  - send out messsage how they need to pull 
+ 
 
 ### Getting people onboarded: 
   - finish docs √

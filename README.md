@@ -1,14 +1,16 @@
 # Instructions 
 
-  - [Setup Demo Video](https://youtu.be/3eMZIkvampA?si=CLnV-dfTVUOk_vXL)
-  - [Use with VS Code Demo](https://youtu.be/_uRYPUHhOlo?si=p6kyI6-7zCaPx0-x) (if your not familiar with VS Code)
+  - Setup Demo Video Link 
+  - Using It Demo 
+  - Using It Demo (if you want to use VScode integrated terminal)
 
+  
 
 ## Setup (Only Once) 
 
 - note: also you may be prompted to install git, that will not be be neccessarry
 
-#### 1. Pull the github repo and Download Google Chrome 
+#### 1. Pull the github repo
 
 #### 2. Open Terminal/Powershell and navigate to root directory of this github:
  - ```cd .../OKIES-Payment-Automation```

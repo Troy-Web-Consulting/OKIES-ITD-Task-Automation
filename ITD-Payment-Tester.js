@@ -161,11 +161,6 @@ function askQuestion(query) {
     console.log("'https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/' is not supported, change your Environment selection. " );
     process.exit(0);
   }
-
-  if(ORGANIZATION_NAME == ''){
-    ORGANIZATION_NAME = process.argv[5];  
-  }
-
   
 
   console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
@@ -209,6 +204,19 @@ function askQuestion(query) {
       await page.getByRole('button', { name: 'Continue' }).click();
     }
 
+    
+    
+    //ensures new page is open 
+    page.setDefaultTimeout(180000); //have 2 minutes to select 
+    const page1Promise = page.waitForEvent('popup');
+    // console.log('\nAutomation Paused');
+    // console.log('You must select your Organization on your own, automation will continue from there!');
+    // await page.evaluate(() => {
+    //   alert("You must select your Organization on your own, automation will continue from there");
+    // });
+
+    await page.getByRole('link', { name: 'Notice of Intent To Drill' }).click();
+    // console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
     
 
     //form information
@@ -289,7 +297,6 @@ function askQuestion(query) {
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Actions' }).click();
     await page1.getByRole('link', { name: 'Add Zone' }).click();
-    await page1.waitForTimeout(700); //wait for 1 second
     await page1.getByRole('combobox', { name: 'Zone Category*' }).getByLabel('select').click();
     await page1.getByRole('option', { name: 'Target' }).click();
     await page1.getByRole('combobox', { name: 'Zone Name*' }).getByLabel('select').click();
