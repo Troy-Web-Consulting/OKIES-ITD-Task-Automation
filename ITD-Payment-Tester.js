@@ -8,7 +8,6 @@ you can make any edits neccessary, then if you prompt it with 'p' will finish up
 INSTRUCTIONS
 - follow instructions in root directory 
 - set the Email and password and your good to go
-
 */
 
 /* VARS TO SET*/
@@ -16,7 +15,9 @@ INSTRUCTIONS
 let EMAIL = '' //email you want to log into okies with
 let PASSWORD = '' //password you want to log into okies with 
 let ENVIRONMENT_SEL = '' // valid ones are 'test' and 'uat' 
-let ORGANIZATION_NAME = '';  //if you are in multiple organizations, put the name of the one you want to log into here and it will get you through, need quotes, if senses you are on correct page, logs you into org specified 
+let ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';  //if you are in multiple organizations, put the name of the one you want to log into here and it will get you through, need quotes 
+//allows for you to make the same calls every time 
+let orgWhere = 'test' //NOT REQUIRED can be test, uat, or both; describes on what environments you are in multiple orgs, if not given one, will default to doing it 
 
 
 
@@ -61,6 +62,9 @@ var randID = Math.floor(Math.random() * 1001);
 //defining credit cart vars
 const today = new Date(); 
 const ccExpirYear = (today.getFullYear() + 1).toString()
+has500 = false; 
+alrPrint500 = false; 
+let currentSegment = ''; 
 let ccExpirMonth = ''
 if(today.getMonth() + 1 < 10){
   ccExpirMonth = '0' + (today.getMonth() + 1).toString();
@@ -117,9 +121,9 @@ async function makePayment(page1, curFormURL){
   await page1.getByRole('textbox', { name: 'Name on Credit Card *' }).fill('John Smith');
   //edited to allow for payment validation
   page1.setDefaultTimeout(40000); 
-  await page1.getByRole('button', { name: 'Next' }).click();
-  await page1.getByRole('button', { name: 'Submit Payment' }).click();
-  await page1.getByRole('button', { name: 'OK' }).click();
+  // await page1.getByRole('button', { name: 'Next' }).click();
+  // await page1.getByRole('button', { name: 'Submit Payment' }).click();
+  // await page1.getByRole('button', { name: 'OK' }).click();
 }
 
 //allows for asking questions using readline: 
@@ -150,6 +154,18 @@ function askQuestion(query) {
     ENVIRONMENT_SEL = process.argv[4];  
   }
 
+  const counter = process.argv[5]
+
+  if(ORGANIZATION_NAME == ''){
+    ORGANIZATION_NAME = process.argv[6];  
+  }
+
+  if(orgWhere == ''){
+    orgWhere = process.argv[7];  
+  }
+  
+
+  
   ENVIRONMENT_SEL = ENVIRONMENT_SEL.toLowerCase(); 
 
   //checking URL is right and making uat/test changes 
@@ -168,7 +184,7 @@ function askQuestion(query) {
 
   
 
-  console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
+  // console.log("\nLogging you in with: \nEmail: " + EMAIL + "\nPassword: " + PASSWORD);
 
   const browser = await chromium.launch({
     channel: 'chrome',
@@ -183,6 +199,20 @@ function askQuestion(query) {
   const context = await browser.newContext({  viewport: null});
   const page = await context.newPage();
 
+  console.log("Starting ITD 500 Checker Process with ID: " + counter); 
+
+  page.on('response', (response) => {
+    if (response.status() === 500) {
+      has500 = true;
+      alrPrint500 = true;
+      page.setDefaultTimeout(ERROR_TIMEOUT);
+      console.log('\n*********************ITD Process ID #' + counter+ ' 500 Error Occured*********************');
+      
+      console.log('\nError Url: ' + page.url());
+      console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));
+    }
+  });
+
   //Entire thing in Try-Catch block so that browser will stay open
   try{
     //login
@@ -193,16 +223,8 @@ function askQuestion(query) {
     await page.getByRole('textbox', { name: 'Password' }).click();
     await page.getByRole('textbox', { name: 'Password' }).fill(PASSWORD);
     await page.getByRole('button', { name: 'Sign in' }).click();
-    
-    //ensures new page is open 
-    
-    
-    const page1Promise = page.waitForEvent('popup');
-    
-    await page.waitForTimeout(4000); 
-    
-    // if in organization, will get you in
-    if(page.url() == "https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/General/Account/ExternalLoginCallback" && ORGANIZATION_NAME != ''){
+
+    if((orgWhere === undefined ||orgWhere == ENVIRONMENT_SEL || orgWhere.toLowerCase()  == 'both')  && ORGANIZATION_NAME != ''){
       //select the organization 
       await page.getByRole('combobox', { name: 'Select an Organization*' }).click();
       await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
@@ -210,12 +232,38 @@ function askQuestion(query) {
     }
 
     
+    
+    //ensures new page is open 
+    
+    
+    const page1Promise = page.waitForEvent('popup');
+    // console.log('\nAutomation Paused');
+    // console.log('You must select your Organization on your own, automation will continue from there!');
+    // await page.evaluate(() => {
+    //   alert("You must select your Organization on your own, automation will continue from there");
+    // });
+
+    await page.getByRole('link', { name: 'Notice of Intent To Drill' }).click();
+    // console.log('Organization Selected and Login Completed!!\nAutomation Resumed...');
+    
 
     //form information
     //ensures new page/tab is open
+    currentSegment = '1. Form Information'
+    const page1 = await page1Promise;
+    //flow work as once this is recognized, timeout will occur and then will go to the catch block
+    page1.on('response', (response) => {
+      if (response.status() === 500) {
+        has500 = true;
+        if (!alrPrint500){
+          page1.setDefaultTimeout(ERROR_TIMEOUT);
+          console.log('\n*********************500 Error Occured*********************');
+          console.log('Error Url: ' + page1.url());
+          console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));          
+        }
 
-    await page.getByRole('link', { name: 'Notice of Intent To Drill' }).click();
-    const page1 = await page1Promise; 
+      }
+    });
     await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
     page1.setDefaultTimeout(ERROR_TIMEOUT);
     //Set Hole Type as specificied above
@@ -230,18 +278,20 @@ function askQuestion(query) {
     await page1.getByRole('option', { name: permitType, exact: true  }).click();
     await page1.getByRole('button', { name: 'Save & Continue' }).click();
     await page1.getByRole('button', { name: 'Confirm' }).click();
-    console.log('1. Form Information Populate!');
+    // console.log('1. Form Information Populate!');
 
 
     //Operator Info
+    currentSegment = '2. Operator Info'
     page1.setDefaultTimeout(30000);
     await page1.waitForLoadState();
     page1.setDefaultTimeout(ERROR_TIMEOUT);
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('2. Operator Info Populated!');
+    // console.log('2. Operator Info Populated!');
 
 
     //Well Information
+    currentSegment = '3. Well Information'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByTestId('wi-well-name').click();
     await page1.getByTestId('wi-well-name').fill(wellType + ' ' + holeType + ' ' + permitType + ' ' + randID);
@@ -256,11 +306,7 @@ function askQuestion(query) {
     await page1.locator('#MeridianContainer').getByRole('button', { name: 'select' }).click();
     await page1.getByRole('option', { name: 'CM' }).click();
     await page1.locator('#CountyContainer').getByRole('button', { name: 'select' }).click();
-    if(ENVIRONMENT_SEL == 'test'){
-      await page1.getByRole('option', { name: 'Cimarron' }).click();  
-    }else{
-      await page1.getByRole('option', { name: 'Choctaw' }).click();
-    }
+    await page1.getByRole('option', { name: 'Cimarron' }).click();
     await page1.locator('#NorthSouthOffsetContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wi-north-south-offset').fill('123');
     await page1.locator('#NorthSouthContainer').getByRole('button', { name: 'select' }).click();
@@ -272,9 +318,9 @@ function askQuestion(query) {
     await page1.locator('#Quarter').click();
     await page1.locator('#Quarter').fill('1');
     await page1.locator('#LatitudeContainer').getByRole('spinbutton').click();
-    await page1.getByTestId('wl-latitude').fill('123');
+    await page1.getByTestId('wl-latitude').fill('34');
     await page1.locator('#LongitudeContainer').getByRole('spinbutton').click();
-    await page1.getByTestId('wl-longitude').fill('123');
+    await page1.getByTestId('wl-longitude').fill('-96');
     await page1.locator('#GroundElevationContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wi-ground-information').fill('123');
     await page1.locator('#BaseTreatableWaterContainer').getByRole('spinbutton').click();
@@ -282,10 +328,12 @@ function askQuestion(query) {
     await page1.locator('#PropertyBoundaryDistanceContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wl-property-distance').fill('123');
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('3. Well Information Populated!');
+    // console.log('3. Well Information Populated!');
+
 
 
     //Geologic Info
+    currentSegment = '4. Geologic Info'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Actions' }).click();
     await page1.getByRole('link', { name: 'Add Zone' }).click();
@@ -296,74 +344,100 @@ function askQuestion(query) {
     await page1.getByText('1ST BROMIDE - 202BRMD1').first().click();
     await page1.getByRole('button', { name: 'Save' }).nth(1).click();
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('4. Geologic Info Populated!');
+    // console.log('4. Geologic Info Populated!');
 
     //Order Notations
+    currentSegment = '5. Order Notations'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.locator('#NoticeGivenContainer').getByRole('button', { name: 'select' }).click();
     await page1.getByRole('option', { name: 'Yes' }).click();
     await page1.locator('#DoesApplicantDifferContainer').getByRole('button', { name: 'select' }).click();
     await page1.getByRole('option', { name: 'No', exact: true }).click();
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('5. Order Notations Populated!');
+    // console.log('5. Order Notations Populated!');
 
     //Pits + Features and Cement + Document Upload
+    currentSegment = '6. Pits'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    currentSegment = '7. Features and Cement'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
+    currentSegment = '8. Document Upload'
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
-    console.log('6. Pits Populated!');
-    console.log('7. Features and Cement skipped (not neccesarry for minimum)!');
-    console.log('8. Document Upload (not neccesarry for minimum)!');
+    // console.log('6. Pits Populated!');
+    // console.log('7. Features and Cement skipped (not neccesarry for minimum)!');
+    // console.log('8. Document Upload (not neccesarry for minimum)!');
 
 
     //Operator Assertions
+    currentSegment = '9. Operator Assertions'
     await page1.waitForTimeout(1000); //wait for 1 second
     for(let i = 0; i < OPERATOR_ASSERTION_CHECKS; i++){
       await page1.locator('#OperatorAssertions_'+ i + '__AssertionResponse_Yes').check();  
     }
     await page1.getByRole('button', { name: 'Next' }).click();
-    console.log('9. Operator Assertions Populated!');
+    // console.log('9. Operator Assertions Populated!');
 
 
     
     //Make Payment
     //make month and year >= current Month/year   
+    currentSegment = '10. Make Payment'
     const currentUrl = page1.url();
-    console.log("------------------------------------------------------------------------------------------");
-    console.log("\nForms 1->9 have been Successfully filled with minimum requirements!!");
-    console.log("Automation Paused");
-    console.log("Take your time to make any edits to any of the sections");
-    
-    let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
-    while (input.toLowerCase() !== 'p'){
-      input = await askQuestion("Did not recognize that command, try again!\n");
-    }
+    // console.log("------------------------------------------------------------------------------------------");
+    // console.log("\nForms 1->9 have been Successfully filled with minimum requirements!!");
+    // console.log("Automation Paused");
+    // console.log("Take your time to make any edits to any of the sections");
 
-    console.log('Automation Resumed...');
+    //don't need the question for now
+    // let input = await askQuestion("Whenever you are ready to make payment and submit the form, type 'p' and hit enter:\n");
+    // while (const ORGANIZATION_NAME = 'VALPOINT OPERATING LLC';  //if you are in multi !== 'p'){
+    //   input = await askQuestion("Did not recognize that command, try again!\n");
+    // }
+
+    // console.log('Automation Resumed...');
 
     await makePayment(page1, currentUrl); 
-    console.log('10. Payment made!');
+    // console.log('10. Payment made!');
 
 
     
-    // Form Submit
-    await page1.getByRole('button', { name: 'Form Submit' }).click();
+    // // Form Submit
+    // currentSegment = '11. Form Submit'
+    // await page1.getByRole('button', { name: 'Form Submit' }).click();
     
-    await page1.waitForTimeout(1000); //wait for 1 second
-    page1.setDefaultTimeout(ERROR_TIMEOUT);
-    await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
-    await page1.getByRole('button', { name: 'Submit', exact: true }).click();
-    await page1.waitForTimeout(2000); //wait for 2 seconds
+    // await page1.waitForTimeout(1000); //wait for 1 second
+    // page1.setDefaultTimeout(ERROR_TIMEOUT);
+    // await page1.getByRole('checkbox', { name: 'I hereby certify all' }).check();
+    // await page1.getByRole('button', { name: 'Submit', exact: true }).click();
+    // await page1.waitForTimeout(2000); //wait for 2 seconds
+    console.log('\nITD Process ID #' + counter+ ' is done, No 500 Errors Detected!!')
+    console.log('Process Finished: ' +  new Date().toLocaleString('en-US', {hour12: false}));  
     console.log("------------------------------------------------------------------------------------------");
-    console.log('\nForm Successfully Submitted!!')
-    console.log('Hit Ctrl+C to terminate the Script and close the window (so you can run again!)')
+    browser.close()
+    // console.log('Hit Ctrl+C to terminate the Script and close the window (so you can run again!)')
   }catch (error){
-    console.log("------------------------------------------------------------------------------------------");
-    console.error('\nError occurred:', error);
-    console.log('Browser will stay open for debugging.\nHit Control+C to Terminate current script and try again');
+    if(has500){
+      //note, only 500s will stay open for debugging
+      
+      console.log("Error Occured on section:  " + currentSegment)
+      if (error.stack){
+        const stackLines = error.stack.split('\n');
+        const relevantLine = stackLines[2]; //last thing callsed 
+        console.log("Current Button/Click attempt: " + relevantLine)
+      }
+      console.error('\nEntire Playwright Stack Trace:\n', error);
+      console.log("------------------------------------------------------------------------------------------");
+
+    //store the last completed segment and output it 
+    //PLaywright line it error at
+    }else{
+      console.error('\nITD Process ID #' + counter+ ' Non-500 Error occurred:', error);
+      console.log('When error Occured: ' +  new Date().toLocaleString('en-US', {hour12: false}));          
+      console.log("------------------------------------------------------------------------------------------");
+    }
   }
   
 })();
