@@ -208,7 +208,6 @@ function askQuestion(query) {
     
     //ensures new page is open 
     page.setDefaultTimeout(180000); //have 2 minutes to select 
-    const page1Promise = page.waitForEvent('popup');
     // console.log('\nAutomation Paused');
     // console.log('You must select your Organization on your own, automation will continue from there!');
     // await page.evaluate(() => {
