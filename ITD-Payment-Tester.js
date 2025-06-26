@@ -323,7 +323,7 @@ function askQuestion(query) {
     await page1.getByRole('spinbutton', { name: 'Total Depth (TVD ft)*' }).click();
     await page1.getByTestId('fc-wbi-modal-wellbore-total-depth-tvd').fill('2000');
     await page1.getByRole('button', { name: 'Save' }).nth(1).click();
-    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+
 
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
     await page1.waitForTimeout(1000); //wait for 1 second
