@@ -307,6 +307,24 @@ function askQuestion(query) {
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
     await page1.waitForTimeout(1000); //wait for 1 second
+    await page1.pause()
+    
+    await page1.locator('#WellboreInformationToolbar').getByRole('button', { name: 'Actions' }).click();
+    await page1.getByRole('link', { name: 'Add Wellbore' }).click();
+    await page1.getByRole('combobox', { name: 'Wellbore Type*' }).locator('span').first().click();
+    await page1.getByRole('option', { name: 'Pilot Hole' }).click();
+    await page1.getByRole('combobox', { name: 'Wellbore Construction Status*' }).locator('span').first().click();
+    await page1.getByRole('option', { name: 'Permitted' }).click();
+    await page1.locator('#wellbore-information-section div').filter({ hasText: 'Wellbore Code (API 11 and 12)' }).nth(3).click();
+    await page1.getByRole('spinbutton', { name: 'Total Depth (MD ft)*' }).click();
+    await page1.getByTestId('fc-wbi-modal-wellbore-total-depth-md').fill('1000');
+    await page1.getByRole('spinbutton', { name: 'Wellbore Start Depth*' }).click();
+    await page1.getByTestId('fc-wbi-modal-wellbore-start-depth').fill('500');
+    await page1.getByRole('spinbutton', { name: 'Total Depth (TVD ft)*' }).click();
+    await page1.getByTestId('fc-wbi-modal-wellbore-total-depth-tvd').fill('2000');
+    await page1.getByRole('button', { name: 'Save' }).nth(1).click();
+    await page1.getByRole('button', { name: 'Next', exact: true }).click();
+
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
