@@ -307,8 +307,7 @@ function askQuestion(query) {
     await page1.waitForTimeout(1000); //wait for 1 second
     await page1.getByRole('button', { name: 'Next', exact: true }).click();
     await page1.waitForTimeout(1000); //wait for 1 second
-    await page1.pause()
-    
+  
     await page1.locator('#WellboreInformationToolbar').getByRole('button', { name: 'Actions' }).click();
     await page1.getByRole('link', { name: 'Add Wellbore' }).click();
     await page1.getByRole('combobox', { name: 'Wellbore Type*' }).locator('span').first().click();
