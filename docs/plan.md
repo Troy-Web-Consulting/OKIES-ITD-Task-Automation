@@ -96,12 +96,10 @@ do demo in vs code
   
 
 
-  1. Stops at payment, one command to contine
-  1. Support different form permuations 
-  2. Better debugging, know exactly where click/entry failed (just parsing the messge)
-  3. Controller view, user can type in a command 1,2,3,4 to fill out corresponding section 
-  4. Get User Data in so can do all of above + have chrome exentions 
   5. Fit to format of plugging automation scripts - encorporate their logging
+  1. Support different form permuations 
+  4. Get User Data in so can do all of above + have chrome exentions 
+  
 
 
   - add in tells you where you went wrong functionality on 500
