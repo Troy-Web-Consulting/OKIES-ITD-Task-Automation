@@ -3,3 +3,8 @@ package-lock.json
 node_modules/
 my-user-data/
 loginJsons/
+counter.txt
+testLog.txt
+uatLog.txt
+.DS_Store
+mycommands.md
