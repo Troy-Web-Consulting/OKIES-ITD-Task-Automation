@@ -10,6 +10,9 @@ INSTRUCTIONS
 
 const { chromium } = require('playwright');
 
+/* VARS TO SET*/
+const LOGIN_FILE_NAME = 'auth.json';  
+
 /*Random Entry Variable Generation*/
 
 // Enum-like object
@@ -45,8 +48,6 @@ var permitType = PermitType.NON;
 var randID = Math.floor(Math.random() * 1001);
 
 
-/* VARS TO SET*/
-const LOGIN_FILE_NAME = 'auth.json';  
 
 (async () => {
   const browser = await chromium.launch({
