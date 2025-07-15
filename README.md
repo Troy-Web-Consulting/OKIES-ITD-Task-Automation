@@ -96,6 +96,7 @@ At line:1 char:1
 
 ## IMPORTANT things to note:
   - This Script currently only automates IDT forms of [this permutation](docs/curPer.png). Let me know of any otherones that would be helpful to test
+  - This iteration of the automation automatically populates a well bore of [this type](docs/well-bore.png) under '7. Features and Cement' 
   - you can run multiple at a time by just starting a new terminal tab and following instruction #1
     - [here is a cool bash script that runs uat/test every 30 minutes automatically](bash/onTimer.sh) 
       - requires changing cd command to run; also may only work on mac

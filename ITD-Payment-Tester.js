@@ -267,6 +267,12 @@ function askQuestion(query) {
     await page1.getByRole('option', { name: 'East' }).click();
     await page1.locator('#Quarter').click();
     await page1.locator('#Quarter').fill('1');
+    await page1.locator('#QuarterQuarterQuarterQuarter').click();
+    await page1.locator('#QuarterQuarterQuarterQuarter').fill('1');
+    await page1.locator('#QuarterQuarterQuarter').click();
+    await page1.locator('#QuarterQuarterQuarter').fill('1');
+    await page1.locator('#QuarterQuarter').click();
+    await page1.locator('#QuarterQuarter').fill('1');
     await page1.locator('#LatitudeContainer').getByRole('spinbutton').click();
     await page1.getByTestId('wl-latitude').fill('34');
     await page1.locator('#LongitudeContainer').getByRole('spinbutton').click();
