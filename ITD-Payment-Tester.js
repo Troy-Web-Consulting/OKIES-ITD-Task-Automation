@@ -317,7 +317,7 @@ function askQuestion(query) {
     await page1.locator('#WellboreInformationToolbar').getByRole('button', { name: 'Actions' }).click();
     await page1.getByRole('link', { name: 'Add Wellbore' }).click();
     await page1.getByRole('combobox', { name: 'Wellbore Type*' }).locator('span').first().click();
-    await page1.getByRole('option', { name: 'Pilot Hole' }).click();
+    await page1.getByRole('option', { name: 'Lateral' }).click();
     await page1.getByRole('combobox', { name: 'Wellbore Construction Status*' }).locator('span').first().click();
     await page1.getByRole('option', { name: 'Permitted' }).click();
     await page1.locator('#wellbore-information-section div').filter({ hasText: 'Wellbore Code (API 11 and 12)' }).nth(3).click();
