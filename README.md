@@ -1,7 +1,7 @@
 # Instructions 
 
-  - [Setup Demo Video]()
-  - [Use with VS Code Demo]() (if your not familiar with VS Code)
+  - [Setup Demo Video](https://drive.google.com/file/d/1x73RR87uetTkbwv_sV174vbXlDwIWMDP/view?usp=drive_link)
+  - [Use with VS Code Demo](https://drive.google.com/file/d/11xYnSSbNgGFHXwd9FgfKdCrf4UnhGdvN/view?usp=drive_link) (if your not familiar with VS Code)
 
 
 ## Setup (Only Once) 
