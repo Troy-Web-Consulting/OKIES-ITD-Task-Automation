@@ -3,3 +3,6 @@ package-lock.json
 node_modules/
 my-user-data/
 loginJsons/
+bash/
+testLog.txt
+uatLog.txt
