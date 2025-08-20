@@ -154,9 +154,9 @@ function askQuestion(query) {
 
   //checking URL is right and making uat/test changes 
   if(ENVIRONMENT_SEL == 'test'){
-    OPERATOR_ASSERTION_CHECKS = 53; 
+    OPERATOR_ASSERTION_CHECKS = 54; 
   }else if(ENVIRONMENT_SEL == 'uat'){
-    OPERATOR_ASSERTION_CHECKS = 53; 
+    OPERATOR_ASSERTION_CHECKS = 54; 
   }else{
     console.log("'https://okies-"+ ENVIRONMENT_SEL+ ".occ.ok.gov/' is not supported, change your Environment selection. " );
     process.exit(0);
@@ -208,26 +208,25 @@ function askQuestion(query) {
       await page.locator('span.k-list-item-text:has-text("'+ ORGANIZATION_NAME + '")').click();
       await page.getByRole('button', { name: 'Continue' }).click();
     }
-
+    
     
 
     //form information
     //ensures new page/tab is open
-
+    await page.getByRole('tab', { name: 'Online Forms' }).click()
     await page.getByRole('link', { name: 'Notice of Intent To Drill' }).click();
     const page1 = await page1Promise; 
-    await page1.getByRole('combobox', { name: 'Notice of Intent to*' }).getByLabel('select').click();
     page1.setDefaultTimeout(ERROR_TIMEOUT);
     //Set Hole Type as specificied above
-    await page1.getByRole('option', { name: 'Drill' }).click();
-    await page1.locator('span').filter({ hasText: 'Directional HoleHorizontal' }).getByLabel('select').click();
-    await page1.getByRole('option', { name: holeType }).click();
-    //Set Well Type as specified above
-    await page1.getByRole('combobox', { name: 'Type of Well*' }).getByLabel('select').click();
-    await page1.getByRole('option', { name: wellType }).first().click();
-    //Set Permit Type as specified above
-    await page1.locator('div:nth-child(26) > .k-picker > .k-input-button').click();
-    await page1.getByRole('option', { name: permitType, exact: true  }).click();
+    await page1.getByRole('combobox', { name: 'Notice of Intent*' }).locator('span').nth(1).click();
+    await page1.getByRole('option', { name: 'New Drill' }).click();
+    await page1.getByRole('combobox', { name: 'Type of Drilling Operation*' }).click();
+    await page1.getByRole('option', { name: 'Horizontal Hole' }).click();
+    await page1.getByRole('combobox', { name: 'Type of Well*' }).locator('span').nth(1).click();
+    await page1.getByRole('option', { name: 'Commercial Disposal', exact: true }).click();
+    await page1.waitForTimeout(1000);
+    await page1.locator('#formContent').getByText('Select').nth(1).click();
+    await page1.getByRole('option', { name: 'Expedited', exact: true }).click();
     await page1.getByRole('button', { name: 'Save & Continue' }).click();
     await page1.getByRole('button', { name: 'Confirm' }).click();
     console.log('1. Form Information Populate!');
@@ -363,7 +362,13 @@ function askQuestion(query) {
 
     console.log('Automation Resumed...');
 
-    await makePayment(page1, currentUrl); 
+    if(ENVIRONMENT_SEL == 'uat'){
+      await makePayment(page1, currentUrl); 
+    }else{
+      await page1.getByRole('button', { name: 'Mock Payment' }).click(); 
+    }
+    
+    
     console.log('10. Payment made!');
 
 
